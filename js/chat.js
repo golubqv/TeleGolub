@@ -58,7 +58,7 @@ window.openChat = async function(uid){
 
 }
 
-window.sendMessage = async function(){
+window.sendMessage = async function(text){
 
     if(currentChat===null){
 

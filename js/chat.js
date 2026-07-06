@@ -2,51 +2,91 @@ import { auth, db } from "./firebase.js";
 
 import {
     doc,
+    getDoc,
     setDoc,
     collection,
     addDoc,
-    serverTimestamp,
     query,
     orderBy,
-    onSnapshot
+    onSnapshot,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-let currentChat = null;
+window.currentChat = null;
 
-window.openChat = async function(uid){
+let unsubscribe = null;
+
+window.createChat = async function(friendUid){
 
     const myUid = auth.currentUser.uid;
 
-    currentChat = [myUid, uid].sort().join("_");
+    const chatId = [myUid, friendUid].sort().join("_");
 
-    document.getElementById("messages").innerHTML="";
+    const chatRef = doc(db,"chats",chatId);
 
-    const q = query(
-        collection(db,"chats",currentChat,"messages"),
+    const chatSnap = await getDoc(chatRef);
+
+    if(!chatSnap.exists()){
+
+        await setDoc(chatRef,{
+
+            members:[myUid,friendUid],
+
+            createdAt:serverTimestamp(),
+
+            lastMessage:"",
+
+            lastTime:serverTimestamp()
+
+        });
+
+    }
+
+    openChat(chatId);
+
+}
+
+window.openChat = function(chatId){
+
+    window.currentChat = chatId;
+
+    const messages = document.getElementById("messages");
+
+    messages.innerHTML="";
+
+    if(unsubscribe){
+
+        unsubscribe();
+
+    }
+
+    const q=query(
+
+        collection(db,"chats",chatId,"messages"),
+
         orderBy("time")
+
     );
 
-    onSnapshot(q,(snapshot)=>{
-
-        const messages=document.getElementById("messages");
+    unsubscribe=onSnapshot(q,(snapshot)=>{
 
         messages.innerHTML="";
 
-        snapshot.forEach((doc)=>{
+        snapshot.forEach((document)=>{
 
-            const data=doc.data();
+            const data=document.data();
 
             const div=document.createElement("div");
 
             div.className="message";
 
-            if(data.sender===myUid){
+            if(data.sender===auth.currentUser.uid){
 
                 div.classList.add("me");
 
             }
 
-            div.textContent=data.text;
+            div.innerHTML=data.text;
 
             messages.appendChild(div);
 
@@ -58,22 +98,13 @@ window.openChat = async function(uid){
 
 }
 
-window.sendMessage = async function(text){
+window.sendChatMessage = async function(text){
 
-    if(currentChat===null){
-
-        alert("Сначала выберите пользователя");
-
-        return;
-
-    }
-
-    if (!text || text.trim() === "") return;
-
+    if(window.currentChat===null) return;
 
     await addDoc(
 
-        collection(db,"chats",currentChat,"messages"),
+        collection(db,"chats",window.currentChat,"messages"),
 
         {
 
@@ -87,6 +118,20 @@ window.sendMessage = async function(text){
 
     );
 
+    await setDoc(
 
+        doc(db,"chats",window.currentChat),
+
+        {
+
+            lastMessage:text,
+
+            lastTime:serverTimestamp()
+
+        },
+
+        {merge:true}
+
+    );
 
 }

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -9,67 +10,39 @@
 <link rel="stylesheet" href="css/app.css">
 
 </head>
-
 <body>
 
 <div class="app">
 
     <!-- Левая панель -->
-
     <aside class="sidebar">
 
         <div class="logo">
-            <h2>🕊️ TeleGolub</h2>
+            🕊️ <span>TeleGolub</span>
         </div>
 
-        <div class="search">
-            <input
-                type="text"
-                placeholder="Поиск пользователей..."
-            >
-        </div>
+        <input
+            id="search"
+            class="search"
+            type="text"
+            placeholder="Поиск по @username"
+            oninput="searchUser()"
+        >
 
-        <div class="chat-list">
+        <div id="searchResult"></div>
 
-            <div class="chat active">
+        <h3 class="title">Чаты</h3>
 
+        <div id="chatList" class="chat-list">
+
+            <div class="chat-item">
                 <div class="avatar"></div>
 
-                <div class="info">
+                <div>
 
-                    <div class="top">
-                        <span class="name">Избранное</span>
-                        <span class="time">12:41</span>
-                    </div>
+                    <b>Добро пожаловать</b><br>
 
-                    <div class="last">
-                        Добро пожаловать 👋
-                    </div>
-
-                </div>
-
-            </div>
-
-            <div class="chat">
-
-                <div class="avatar ai"></div>
-
-                <div class="info">
-
-                    <div class="top">
-                        <span class="name">
-                            TeleGolub AI ⭐
-                        </span>
-
-                        <span class="time">
-                            PRO
-                        </span>
-
-                    </div>
-
-                    <div class="last">
-                        Только для TeleGolub Pro
-                    </div>
+                    <small>Выберите чат</small>
 
                 </div>
 
@@ -80,43 +53,31 @@
     </aside>
 
     <!-- Правая часть -->
-
     <main class="main">
 
         <header class="header">
 
-            <div class="profile">
+            <div>
 
-                <div class="avatar"></div>
+                <h2 id="username">
+                    Загрузка...
+                </h2>
 
-                <div>
-
-                    <h3 id="username">
-                        Загрузка...
-                    </h3>
-
-                    <span class="status">
-                        🟢 В сети
-                    </span>
-
-                </div>
+                <span class="status">
+                    🟢 В сети
+                </span>
 
             </div>
 
-            <div class="actions">
-
-                🔍
-
-                ⚙️
-
-            </div>
+            <button onclick="logout()">
+                Выйти
+            </button>
 
         </header>
 
         <div
-            class="messages"
             id="messages"
-        >
+            class="messages">
 
         </div>
 
@@ -140,6 +101,7 @@
 
 <script type="module" src="js/app.js"></script>
 <script type="module" src="js/auth.js"></script>
+<script type="module" src="js/search.js"></script>
 
 </body>
 </html>

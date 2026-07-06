@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>TeleGolub</title>
 
 <link rel="stylesheet" href="css/app.css">
+
 </head>
 
 <body>
@@ -13,6 +15,7 @@
 <div class="app">
 
     <!-- Левая панель -->
+
     <aside class="sidebar">
 
         <div class="logo">
@@ -21,17 +24,19 @@
 
         <div class="search">
             <input
-            type="text"
-            placeholder="Поиск пользователей..."
+                type="text"
+                placeholder="Поиск пользователей..."
             >
         </div>
 
         <div class="chat-list">
 
             <div class="chat active">
+
                 <div class="avatar"></div>
 
                 <div class="info">
+
                     <div class="top">
                         <span class="name">Избранное</span>
                         <span class="time">12:41</span>
@@ -42,6 +47,7 @@
                     </div>
 
                 </div>
+
             </div>
 
             <div class="chat">
@@ -52,4 +58,88 @@
 
                     <div class="top">
                         <span class="name">
-                        Tele
+                            TeleGolub AI ⭐
+                        </span>
+
+                        <span class="time">
+                            PRO
+                        </span>
+
+                    </div>
+
+                    <div class="last">
+                        Только для TeleGolub Pro
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+    <!-- Правая часть -->
+
+    <main class="main">
+
+        <header class="header">
+
+            <div class="profile">
+
+                <div class="avatar"></div>
+
+                <div>
+
+                    <h3 id="username">
+                        Загрузка...
+                    </h3>
+
+                    <span class="status">
+                        🟢 В сети
+                    </span>
+
+                </div>
+
+            </div>
+
+            <div class="actions">
+
+                🔍
+
+                ⚙️
+
+            </div>
+
+        </header>
+
+        <div
+            class="messages"
+            id="messages"
+        >
+
+        </div>
+
+        <div class="send">
+
+            <input
+                id="message"
+                type="text"
+                placeholder="Введите сообщение..."
+            >
+
+            <button onclick="sendMessage()">
+                ➤
+            </button>
+
+        </div>
+
+    </main>
+
+</div>
+
+<script type="module" src="js/app.js"></script>
+<script type="module" src="js/auth.js"></script>
+
+</body>
+</html>

@@ -1,21 +1,49 @@
-import { auth } from "./firebase.js";
+import { auth, db } from "./firebase.js";
 
 import {
-  onAuthStateChanged,
-  signOut
+    onAuthStateChanged,
+    signOut
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
 
-onAuthStateChanged(auth, (user) => {
+import {
+    doc,
+    getDoc
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+
+window.currentUserData = null;
+
+onAuthStateChanged(auth, async (user) => {
 
     if (!user) {
-        window.location.href = "login.html";
+
+        location.href = "login.html";
+
         return;
+
     }
+
+    const snap = await getDoc(
+        doc(db, "users", user.uid)
+    );
+
+    if (!snap.exists()) {
+
+        location.href = "setup.html";
+
+        return;
+
+    }
+
+    const data = snap.data();
+
+    window.currentUserData = data;
 
     const username = document.getElementById("username");
 
     if (username) {
-        username.textContent = user.email;
+
+        username.textContent = data.name;
+
     }
 
 });
@@ -24,6 +52,6 @@ window.logout = async function () {
 
     await signOut(auth);
 
-    window.location.href = "login.html";
+    location.href = "login.html";
 
 }

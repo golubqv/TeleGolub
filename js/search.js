@@ -1,4 +1,4 @@
-import { db } from "./firebase.js";
+import { db, auth } from "./firebase.js";
 
 import {
     collection,
@@ -7,41 +7,44 @@ import {
     getDocs
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
+const searchInput = document.getElementById("search");
+const result = document.getElementById("searchResult");
+
 window.searchUser = async function () {
 
-    const input = document.getElementById("search");
-    const result = document.getElementById("searchResult");
-
-    const username = input.value
+    const value = searchInput.value
         .trim()
         .toLowerCase()
         .replace("@", "");
 
     result.innerHTML = "";
 
-    if (username === "") return;
+    if (value.length < 2) return;
 
     const q = query(
         collection(db, "users"),
-        where("username", "==", username)
+        where("username", "==", value)
     );
 
-    const snapshot = await getDocs(q);
+    const snap = await getDocs(q);
 
-    if (snapshot.empty) {
+    if (snap.empty) {
 
         result.innerHTML = `
-        <div class="user-card">
-            Пользователь не найден
-        </div>
+            <div class="user-card">
+                Пользователь не найден
+            </div>
         `;
 
         return;
+
     }
 
-    snapshot.forEach((doc) => {
+    snap.forEach((document) => {
 
-        const user = doc.data();
+        const user = document.data();
+
+        if (user.uid === auth.currentUser.uid) return;
 
         result.innerHTML += `
 
@@ -53,7 +56,9 @@ window.searchUser = async function () {
 
                 <div>
 
-                    <b>${user.name}</b><br>
+                    <b>${user.name}</b>
+
+                    <br>
 
                     <small>@${user.username}</small>
 
@@ -62,9 +67,9 @@ window.searchUser = async function () {
             </div>
 
             <button
-                onclick="openChat('${doc.id}')">
+                onclick="createChat('${user.uid}')">
 
-                Чат
+                Написать
 
             </button>
 
@@ -73,5 +78,11 @@ window.searchUser = async function () {
         `;
 
     });
+
+}
+
+window.createChat = async function(uid){
+
+    alert("Следующим файлом мы подключим личные чаты 😊");
 
 }

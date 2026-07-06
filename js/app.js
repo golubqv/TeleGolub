@@ -1,58 +1,34 @@
-import { db } from "./firebase.js";
+import { auth } from "./firebase.js";
 
-import {
-  collection,
-  addDoc,
-  serverTimestamp,
-  query,
-  orderBy,
-  onSnapshot
-} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
+import "./chat.js";
+import "./search.js";
+import "./auth.js";
 
-const messages = document.getElementById("messages");
 const input = document.getElementById("message");
 
 window.sendMessage = async function () {
 
-  const text = input.value.trim();
+    if (!window.currentChat) {
+        alert("Выберите чат");
+        return;
+    }
 
-  if (text === "") return;
+    const text = input.value.trim();
 
-  await addDoc(collection(db, "messages"), {
-    text: text,
-    sender: "Me",
-    time: serverTimestamp()
-  });
+    if (text === "") return;
 
-  input.value = "";
+    await window.sendChatMessage(text);
 
-};
+    input.value = "";
 
-const q = query(
-  collection(db, "messages"),
-  orderBy("time")
-);
+}
 
-onSnapshot(q, (snapshot) => {
+input.addEventListener("keydown", (e) => {
 
-  messages.innerHTML = "";
+    if (e.key === "Enter") {
 
-  snapshot.forEach((doc) => {
+        sendMessage();
 
-    const data = doc.data();
-
-    const div = document.createElement("div");
-
-    div.className = "message me";
-
-    div.innerHTML = `
-      <div>${data.text}</div>
-    `;
-
-    messages.appendChild(div);
-
-  });
-
-  messages.scrollTop = messages.scrollHeight;
+    }
 
 });

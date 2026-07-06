@@ -1,15 +1,36 @@
-function sendMessage(){
+import { db } from "./firebase.js";
 
-const input=document.getElementById("message");
+import {
+  collection,
+  addDoc,
+  serverTimestamp,
+  query,
+  orderBy,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-if(input.value==="") return;
+const messages = document.getElementById("messages");
+const input = document.getElementById("message");
 
-const div=document.getElementById("messages");
+window.sendMessage = async function () {
+  if (input.value.trim() === "") return;
 
-div.innerHTML+=`<p>${input.value}</p>`;
+  await addDoc(collection(db, "messages"), {
+    text: input.value,
+    time: serverTimestamp()
+  });
 
-input.value="";
+  input.value = "";
+};
 
-div.scrollTop=div.scrollHeight;
+const q = query(collection(db, "messages"), orderBy("time"));
 
-}
+onSnapshot(q, (snapshot) => {
+  messages.innerHTML = "";
+
+  snapshot.forEach((doc) => {
+    messages.innerHTML += `<p>${doc.data().text}</p>`;
+  });
+
+  messages.scrollTop = messages.scrollHeight;
+});

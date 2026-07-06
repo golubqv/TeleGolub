@@ -1,40 +1,165 @@
-body{
+*{
 margin:0;
-font-family:Arial;
-background:#1b1b1b;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#0f172a;
+height:100vh;
+overflow:hidden;
 color:white;
 }
 
-.chat{
-max-width:600px;
-margin:auto;
-padding:20px;
+.app{
+display:flex;
+height:100vh;
 }
 
-#messages{
-height:400px;
+/* Левая панель */
+
+.sidebar{
+width:330px;
+background:#162033;
+border-right:1px solid #24314d;
+display:flex;
+flex-direction:column;
+}
+
+.logo{
+padding:25px;
+font-size:26px;
+font-weight:bold;
+color:#5ea8ff;
+}
+
+.search{
+padding:15px;
+}
+
+.search input{
+width:100%;
+padding:12px;
+border:none;
+border-radius:12px;
+background:#23324d;
+color:white;
+outline:none;
+}
+
+.chat-list{
 overflow:auto;
-background:#2a2a2a;
-padding:10px;
-border-radius:10px;
-margin-bottom:10px;
+flex:1;
+}
+
+.chat-item{
+display:flex;
+align-items:center;
+gap:15px;
+padding:15px;
+cursor:pointer;
+transition:.25s;
+}
+
+.chat-item:hover{
+background:#22304a;
+}
+
+.chat-item.active{
+background:#2b3d5d;
+}
+
+.avatar{
+width:55px;
+height:55px;
+border-radius:50%;
+background:#4da3ff;
+}
+
+/* Правая часть */
+
+.chat{
+flex:1;
+display:flex;
+flex-direction:column;
+}
+
+.chat-header{
+height:75px;
+background:#162033;
+display:flex;
+align-items:center;
+padding:0 25px;
+font-size:22px;
+font-weight:bold;
+border-bottom:1px solid #24314d;
+}
+
+.messages{
+flex:1;
+overflow:auto;
+padding:25px;
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+
+.message{
+max-width:70%;
+padding:14px 18px;
+border-radius:18px;
+background:#23324d;
+animation:show .25s;
+}
+
+.me{
+background:#1976ff;
+align-self:flex-end;
 }
 
 .send{
 display:flex;
+padding:18px;
 gap:10px;
+background:#162033;
 }
 
-input{
+.send input{
 flex:1;
-padding:10px;
+padding:14px;
 border:none;
-border-radius:8px;
+border-radius:15px;
+background:#23324d;
+color:white;
+outline:none;
 }
 
-button{
-padding:10px 20px;
+.send button{
+width:60px;
 border:none;
-border-radius:8px;
+border-radius:15px;
+background:#1976ff;
+color:white;
+font-size:22px;
 cursor:pointer;
+transition:.25s;
+}
+
+.send button:hover{
+background:#3a91ff;
+}
+
+@keyframes show{
+
+from{
+opacity:0;
+transform:translateY(15px);
+}
+
+to{
+opacity:1;
+transform:none;
+}
+
 }

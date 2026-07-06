@@ -1,14 +1,12 @@
 import { auth, db } from "./firebase.js";
 
-import {
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-auth.js";
 
 import {
-  doc,
-  getDoc,
-  setDoc,
-  serverTimestamp
+    doc,
+    setDoc,
+    getDoc,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 let currentUser = null;
@@ -16,7 +14,7 @@ let currentUser = null;
 onAuthStateChanged(auth, (user) => {
 
     if (!user) {
-        window.location.href = "login.html";
+        location.href = "login.html";
         return;
     }
 
@@ -26,53 +24,60 @@ onAuthStateChanged(auth, (user) => {
 
 window.saveProfile = async function () {
 
+    if (!currentUser) {
+        alert("Пользователь не найден.");
+        return;
+    }
+
     const name = document.getElementById("name").value.trim();
 
-    let username = document.getElementById("username").value.trim().toLowerCase();
+    let username = document.getElementById("username").value
+        .trim()
+        .toLowerCase()
+        .replace("@", "");
 
-    if (!name || !username) {
-        alert("Заполните все поля");
+    const bio = document.getElementById("bio").value.trim();
+
+    if (name === "" || username === "") {
+        alert("Заполните имя и username.");
         return;
     }
 
-    username = username.replace("@","");
+    const usernameRef = doc(db, "usernames", username);
 
-    const usernameRef = doc(db,"usernames",username);
+    const usernameSnap = await getDoc(usernameRef);
 
-    const usernameDoc = await getDoc(usernameRef);
-
-    if(usernameDoc.exists()){
-
-        alert("Этот username уже занят");
-
+    if (usernameSnap.exists()) {
+        alert("Этот @username уже занят.");
         return;
-
     }
 
-    await setDoc(doc(db,"users",currentUser.uid),{
+    await setDoc(doc(db, "users", currentUser.uid), {
 
-        name:name,
+        uid: currentUser.uid,
 
-        username:username,
+        email: currentUser.email,
 
-        email:currentUser.email,
+        name: name,
 
-        avatar:"",
+        username: username,
 
-        bio:"",
+        bio: bio,
 
-        pro:false,
+        avatar: "",
 
-        createdAt:serverTimestamp()
+        pro: false,
 
-    });
+        verified: false,
 
-    await setDoc(usernameRef,{
-
-        uid:currentUser.uid
+        createdAt: serverTimestamp()
 
     });
 
-    location.href="index.html";
+    await setDoc(usernameRef, {
+        uid: currentUser.uid
+    });
 
-      }
+    location.href = "index.html";
+
+};

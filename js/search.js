@@ -1,62 +1,77 @@
 import { db } from "./firebase.js";
 
 import {
-collection,
-query,
-where,
-getDocs
+    collection,
+    query,
+    where,
+    getDocs
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 window.searchUser = async function () {
 
-const username = document
-.getElementById("search")
-.value
-.trim()
-.toLowerCase()
-.replace("@","");
+    const input = document.getElementById("search");
+    const result = document.getElementById("searchResult");
 
-const list = document.getElementById("searchResult");
+    const username = input.value
+        .trim()
+        .toLowerCase()
+        .replace("@", "");
 
-list.innerHTML = "";
+    result.innerHTML = "";
 
-if(username==="") return;
+    if (username === "") return;
 
-const q=query(
-collection(db,"users"),
-where("username","==",username)
-);
+    const q = query(
+        collection(db, "users"),
+        where("username", "==", username)
+    );
 
-const snap=await getDocs(q);
+    const snapshot = await getDocs(q);
 
-snap.forEach(doc=>{
+    if (snapshot.empty) {
 
-const user=doc.data();
+        result.innerHTML = `
+        <div class="user-card">
+            Пользователь не найден
+        </div>
+        `;
 
-list.innerHTML+=`
+        return;
+    }
 
-<div class="user-card">
+    snapshot.forEach((doc) => {
 
-<div class="avatar"></div>
+        const user = doc.data();
 
-<div>
+        result.innerHTML += `
 
-<b>${user.name}</b><br>
+        <div class="user-card">
 
-<small>@${user.username}</small>
+            <div style="display:flex;align-items:center;gap:12px;">
 
-</div>
+                <div class="avatar"></div>
 
-<button onclick="openChat('${doc.id}')">
+                <div>
 
-Открыть
+                    <b>${user.name}</b><br>
 
-</button>
+                    <small>@${user.username}</small>
 
-</div>
+                </div>
 
-`;
+            </div>
 
-});
+            <button
+                onclick="openChat('${doc.id}')">
+
+                Чат
+
+            </button>
+
+        </div>
+
+        `;
+
+    });
 
 }

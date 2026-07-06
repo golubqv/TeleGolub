@@ -68,11 +68,8 @@ window.sendMessage = async function(text){
 
     }
 
-    const input=document.getElementById("message");
+    if (!text || text.trim() === "") return;
 
-    const text=input.value.trim();
-
-    if(text==="") return;
 
     await addDoc(
 
@@ -90,6 +87,6 @@ window.sendMessage = async function(text){
 
     );
 
-    input.value="";
+
 
 }

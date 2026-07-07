@@ -113,7 +113,7 @@ window.loadInventory = async function(type){
 
             <button onclick="giftInfo('${item.id}')">
 
-                Открыть
+                Подарить
 
             </button>
 

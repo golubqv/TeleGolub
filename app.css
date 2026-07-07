@@ -404,4 +404,26 @@ color:white;
 
 cursor:pointer;
 
+.gift-message{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+padding:12px;
+
+border-radius:18px;
+
+background:linear-gradient(135deg,#1e3a8a,#2563eb);
+
+color:white;
+
 }
+
+.gift-big{
+
+font-size:60px;
+
+                           }

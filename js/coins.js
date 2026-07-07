@@ -7,36 +7,50 @@ import {
     increment
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-window.getCoins = async function () {
+window.updateCoins = async function () {
+
+    if (!auth.currentUser) return;
 
     const snap = await getDoc(
         doc(db, "users", auth.currentUser.uid)
     );
 
-    if (!snap.exists()) return 0;
+    if (!snap.exists()) return;
 
-    return snap.data().coins || 0;
+    const coins = snap.data().coins || 0;
 
-}
+    const el = document.getElementById("coins");
 
-window.addCoins = async function (amount) {
+    if (el) {
 
-    await updateDoc(
-        doc(db, "users", auth.currentUser.uid),
-        {
-            coins: increment(amount)
-        }
-    );
+        el.textContent = coins;
+
+    }
 
 }
 
-window.removeCoins = async function (amount) {
+window.addCoins = async function(amount){
 
     await updateDoc(
-        doc(db, "users", auth.currentUser.uid),
+        doc(db,"users",auth.currentUser.uid),
         {
-            coins: increment(-amount)
+            coins:increment(amount)
         }
     );
+
+    updateCoins();
+
+}
+
+window.removeCoins = async function(amount){
+
+    await updateDoc(
+        doc(db,"users",auth.currentUser.uid),
+        {
+            coins:increment(-amount)
+        }
+    );
+
+    updateCoins();
 
 }

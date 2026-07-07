@@ -4,7 +4,9 @@ import {
     collection,
     query,
     where,
-    onSnapshot
+    onSnapshot,
+    doc,
+    getDoc
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 window.loadChats = function () {
@@ -16,30 +18,50 @@ window.loadChats = function () {
         where("members", "array-contains", auth.currentUser.uid)
     );
 
-    onSnapshot(q, (snapshot) => {
+    onSnapshot(q, async (snapshot) => {
 
         list.innerHTML = "";
 
-        snapshot.forEach((doc) => {
+        for (const chatDoc of snapshot.docs) {
 
-            const chat = doc.data();
+            const chat = chatDoc.data();
+
+            const friendUid = chat.members.find(
+                uid => uid !== auth.currentUser.uid
+            );
+
+            if (!friendUid) continue;
+
+            const userSnap = await getDoc(
+                doc(db, "users", friendUid)
+            );
+
+            if (!userSnap.exists()) continue;
+
+            const user = userSnap.data();
 
             list.innerHTML += `
 
             <div
                 class="chat-item"
-                onclick="openChat('${doc.id}')">
+                onclick="openChat('${chatDoc.id}')">
 
-                <div class="avatar"></div>
+                <div class="avatar">
 
-                <div>
+                    ${user.name.charAt(0).toUpperCase()}
 
-                    <b>${chat.lastMessage || "Новый чат"}</b>
+                </div>
+
+                <div class="chat-info">
+
+                    <b>${user.name}</b>
 
                     <br>
 
                     <small>
-                        ${chat.members.length} участника
+
+                        ${chat.lastMessage || "Начните общение"}
+
                     </small>
 
                 </div>
@@ -48,7 +70,7 @@ window.loadChats = function () {
 
             `;
 
-        });
+        }
 
     });
 

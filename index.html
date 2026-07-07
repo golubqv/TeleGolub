@@ -44,7 +44,6 @@
         <div
             id="chatList"
             class="chat-list">
-
         </div>
 
     </aside>
@@ -61,9 +60,9 @@
                     TeleGolub
                 </h2>
 
-                <span class="status">
-                    🟢 В сети
-                </span>
+                <div id="userStatus" class="status">
+                    ⚫ Был недавно
+                </div>
 
             </div>
 
@@ -76,7 +75,6 @@
         <div
             id="messages"
             class="messages">
-
         </div>
 
         <div class="send">
@@ -118,9 +116,7 @@
             <h2>🎁 TeleGolub Gifts</h2>
 
             <button onclick="closeGiftStore()">
-
                 ✕
-
             </button>
 
         </div>
@@ -128,7 +124,6 @@
         <div
             id="giftList"
             class="gift-list">
-
         </div>
 
     </div>
@@ -142,9 +137,10 @@
 <script type="module" src="js/chat.js"></script>
 <script type="module" src="js/search.js"></script>
 <script type="module" src="js/auth.js"></script>
-    <script type="module" src="js/sendGift.js"></script>
-<script type="module" src="js/app.js"></script>
+<script type="module" src="js/sendGift.js"></script>
 <script type="module" src="js/presence.js"></script>
-    
+<script type="module" src="js/userStatus.js"></script>
+<script type="module" src="js/app.js"></script>
+
 </body>
 </html>

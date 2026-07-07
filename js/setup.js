@@ -52,27 +52,35 @@ window.saveProfile = async function () {
         return;
     }
 
-    await setDoc(doc(db, "users", currentUser.uid), {
+await setDoc(doc(db, "users", currentUser.uid), {
 
-        uid: currentUser.uid,
+    uid: currentUser.uid,
 
-        email: currentUser.email,
+    email: currentUser.email,
 
-        name: name,
+    name: name,
 
-        username: username,
+    username: username,
 
-        bio: bio,
+    bio: bio,
 
-        avatar: "",
+    avatar: "",
 
-        pro: false,
+    verified: false,
 
-        verified: false,
+    pro: false,
 
-        createdAt: serverTimestamp()
+    proUntil: null,
 
-    });
+    coins: 0,
+
+    level: 1,
+
+    xp: 0,
+
+    createdAt: serverTimestamp()
+
+});
 
     await setDoc(usernameRef, {
         uid: currentUser.uid

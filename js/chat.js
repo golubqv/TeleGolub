@@ -29,15 +29,10 @@ window.createChat = async function(friendUid){
     if(!chatSnap.exists()){
 
         await setDoc(chatRef,{
-
             members:[myUid,friendUid],
-
             createdAt:serverTimestamp(),
-
             lastMessage:"",
-
             lastTime:serverTimestamp()
-
         });
 
     }
@@ -46,7 +41,7 @@ window.createChat = async function(friendUid){
 
 }
 
-window.openChat = function(chatId){
+window.openChat = async function(chatId){
 
     window.currentChat = chatId;
 
@@ -55,17 +50,33 @@ window.openChat = function(chatId){
     messages.innerHTML="";
 
     if(unsubscribe){
-
         unsubscribe();
+    }
+
+    const chatSnap = await getDoc(doc(db,"chats",chatId));
+
+    if(chatSnap.exists()){
+
+        const chat = chatSnap.data();
+
+        const friendUid = chat.members.find(
+            uid => uid !== auth.currentUser.uid
+        );
+
+        const userSnap = await getDoc(doc(db,"users",friendUid));
+
+        if(userSnap.exists()){
+
+            document.getElementById("username").textContent =
+            userSnap.data().name;
+
+        }
 
     }
 
     const q=query(
-
         collection(db,"chats",chatId,"messages"),
-
         orderBy("time")
-
     );
 
     unsubscribe=onSnapshot(q,(snapshot)=>{
@@ -86,7 +97,29 @@ window.openChat = function(chatId){
 
             }
 
-            div.innerHTML=data.text;
+            let time="";
+
+            if(data.time?.seconds){
+
+                const date=new Date(data.time.seconds*1000);
+
+                time=date.toLocaleTimeString("ru-RU",{
+
+                    hour:"2-digit",
+
+                    minute:"2-digit"
+
+                });
+
+            }
+
+            div.innerHTML=`
+
+                <div>${data.text}</div>
+
+                <small class="msg-time">${time}</small>
+
+            `;
 
             messages.appendChild(div);
 
@@ -98,9 +131,9 @@ window.openChat = function(chatId){
 
 }
 
-window.sendChatMessage = async function(text){
+window.sendChatMessage=async function(text){
 
-    if(window.currentChat===null) return;
+    if(!window.currentChat) return;
 
     await addDoc(
 
@@ -130,7 +163,11 @@ window.sendChatMessage = async function(text){
 
         },
 
-        {merge:true}
+        {
+
+            merge:true
+
+        }
 
     );
 

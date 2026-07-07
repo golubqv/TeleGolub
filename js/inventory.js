@@ -14,11 +14,8 @@ window.currentInventoryType = "basic";
 onAuthStateChanged(auth, (user) => {
 
     if (!user) {
-
         location.href = "login.html";
-
         return;
-
     }
 
     loadInventory("basic");
@@ -27,30 +24,22 @@ onAuthStateChanged(auth, (user) => {
 
 window.loadInventory = async function(type){
 
-    currentInventoryType = type;
+    window.currentInventoryType = type;
 
     document.querySelectorAll(".tab").forEach(tab=>{
-
         tab.classList.remove("active");
-
     });
 
     if(type==="basic"){
-
         document.querySelectorAll(".tab")[0].classList.add("active");
-
     }
 
     if(type==="collectible"){
-
         document.querySelectorAll(".tab")[1].classList.add("active");
-
     }
 
     if(type==="nft"){
-
         document.querySelectorAll(".tab")[2].classList.add("active");
-
     }
 
     const list=document.getElementById("inventoryList");
@@ -58,9 +47,7 @@ window.loadInventory = async function(type){
     list.innerHTML="";
 
     const inventory=await getDocs(
-
         collection(db,"users",auth.currentUser.uid,"inventory")
-
     );
 
     for(const item of inventory.docs){
@@ -68,9 +55,7 @@ window.loadInventory = async function(type){
         const inv=item.data();
 
         const giftSnap=await getDoc(
-
             doc(db,"gifts",inv.giftId)
-
         );
 
         if(!giftSnap.exists()) continue;
@@ -79,42 +64,32 @@ window.loadInventory = async function(type){
 
         if(gift.type!==type) continue;
 
-        let rarity=gift.rarity||"Common";
+        const rarity=(gift.rarity||"Common").toLowerCase();
 
-        let uniqueId=inv.uniqueId||"-";
+        const uniqueId=inv.uniqueId||"-";
 
         list.innerHTML+=`
 
         <div class="gift-card">
 
             <div class="gift-emoji">
-
                 ${gift.emoji}
-
             </div>
 
             <div class="gift-name">
-
                 ${gift.name}
-
             </div>
 
             <div class="gift-id">
-
                 ${uniqueId}
-
             </div>
 
-            <div class="rarity ${rarity.toLowerCase()}">
-
-                ${rarity}
-
+            <div class="rarity ${rarity}">
+                ${gift.rarity || "Common"}
             </div>
 
-            <button onclick="giftInfo('${item.id}')">
-
-                Подарить
-
+            <button onclick="sendGift('${item.id}')">
+                🎁 Подарить
             </button>
 
         </div>
@@ -122,11 +97,5 @@ window.loadInventory = async function(type){
         `;
 
     }
-
-}
-
-window.giftInfo = async function(id){
-
-    alert("Карточка подарка появится в следующем обновлении.");
 
 }

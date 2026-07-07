@@ -10,7 +10,12 @@ import {
     getDoc
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-window.currentUserData = null;
+window.currentUserData = data;
+if(window.updateCoins){
+
+    window.updateCoins();
+
+}
 
 onAuthStateChanged(auth, async (user) => {
 

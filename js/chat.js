@@ -21,6 +21,7 @@ window.createChat = async function(friendUid){
     const myUid = auth.currentUser.uid;
 
     const chatId = [myUid, friendUid].sort().join("_");
+    watchUserStatus(friendUid);
 
     const chatRef = doc(db,"chats",chatId);
 

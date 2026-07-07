@@ -195,4 +195,49 @@ opacity:.7;
 
 .me .msg-time{
 color:#dbeafe;
+  .coins{
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+gap:8px;
+
+margin:15px;
+
+padding:14px;
+
+border-radius:16px;
+
+background:linear-gradient(135deg,#2563eb,#1d4ed8);
+
+color:white;
+
+font-weight:bold;
+
+font-size:17px;
+
+box-shadow:0 10px 25px rgba(37,99,235,.35);
+
+transition:.25s;
+
+}
+
+.coins:hover{
+
+transform:scale(1.03);
+
+cursor:pointer;
+
+}
+
+#coins{
+
+font-size:22px;
+
+font-weight:800;
+
+}
   }

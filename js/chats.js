@@ -1,120 +1,105 @@
 import { auth, db } from "./firebase.js";
 
 import {
-    doc,
-    getDoc,
-    setDoc,
     collection,
-    addDoc,
     query,
-    orderBy,
+    where,
     onSnapshot,
-    serverTimestamp
+    doc,
+    getDoc
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-window.currentChat = null;
+window.loadChats = function () {
 
-let unsubscribe = null;
+    const list = document.getElementById("chatList");
 
-window.createChat = async function(friendUid){
+    const q = query(
+        collection(db, "chats"),
+        where("members", "array-contains", auth.currentUser.uid)
+    );
 
-    const myUid = auth.currentUser.uid;
+    onSnapshot(q, async (snapshot) => {
 
-    const chatId = [myUid, friendUid].sort().join("_");
+        list.innerHTML = "";
 
-    const chatRef = doc(db,"chats",chatId);
+        const chats = snapshot.docs;
 
-    const chatSnap = await getDoc(chatRef);
+        chats.sort((a, b) => {
 
-    if(!chatSnap.exists()){
+            const ta = a.data().lastTime?.seconds || 0;
+            const tb = b.data().lastTime?.seconds || 0;
 
-        await setDoc(chatRef,{
-            members:[myUid,friendUid],
-            createdAt:serverTimestamp(),
-            lastMessage:"",
-            lastTime:serverTimestamp()
+            return tb - ta;
+
         });
 
-    }
+        for (const chatDoc of chats) {
 
-    openChat(chatId);
+            const chat = chatDoc.data();
 
-}
+            const friendUid = chat.members.find(
+                uid => uid !== auth.currentUser.uid
+            );
 
-window.openChat = async function(chatId){
+            if (!friendUid) continue;
 
-    window.currentChat = chatId;
+            const userSnap = await getDoc(
+                doc(db, "users", friendUid)
+            );
 
-    const messages = document.getElementById("messages");
-
-    messages.innerHTML="";
-
-    if(unsubscribe){
-        unsubscribe();
-    }
-
-    const chatSnap = await getDoc(doc(db,"chats",chatId));
-
-    if(chatSnap.exists()){
-
-        const chat = chatSnap.data();
-
-        const friendUid = chat.members.find(
-            uid => uid !== auth.currentUser.uid
-        );
-
-        const userSnap = await getDoc(
-            doc(db,"users",friendUid)
-        );
-
-        if(userSnap.exists()){
+            if (!userSnap.exists()) continue;
 
             const user = userSnap.data();
 
-            document.getElementById("username").textContent = user.name;
+            let time = "";
 
-        }
+            if (chat.lastTime?.seconds) {
 
-    }
+                const date = new Date(chat.lastTime.seconds * 1000);
 
-    const q=query(
-        collection(db,"chats",chatId,"messages"),
-        orderBy("time")
-    );
+                time = date.toLocaleTimeString("ru-RU", {
+                    hour: "2-digit",
+                    minute: "2-digit"
+                });
 
-    unsubscribe = onSnapshot(q,(snapshot)=>{
-
-        messages.innerHTML="";
-
-        snapshot.forEach((document)=>{
-
-            const data=document.data();
-
-            const div=document.createElement("div");
-
-            div.className="message";
-
-            if(data.sender===auth.currentUser.uid){
-                div.classList.add("me");
             }
 
-            div.textContent=data.text;
+            list.innerHTML += `
 
-            messages.appendChild(div);
+            <div
+                class="chat-item"
+                onclick="openChat('${chatDoc.id}')">
 
-        });
+                <div class="avatar">
 
-        messages.scrollTop = messages.scrollHeight;
+                    ${user.name.charAt(0).toUpperCase()}
+
+                </div>
+
+                <div class="chat-info">
+
+                    <div style="display:flex;justify-content:space-between;">
+
+                        <b>${user.name}</b>
+
+                        <small>${time}</small>
+
+                    </div>
+
+                    <small>
+
+                        ${chat.lastMessage || "Начните общение"}
+
+                    </small>
+
+                </div>
+
+            </div>
+
+            `;
+
+        }
 
     });
 
 }
-
-window.sendChatMessage = async function(text){
-
-    if(!window.currentChat) return;
-
-    await addDoc(
-        collection(db,"chats",window.currentChat,"messages"),
-        {
-            sender:auth.currentUser.uid,

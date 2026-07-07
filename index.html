@@ -18,18 +18,13 @@
     <aside class="sidebar">
 
         <div class="logo">
-            <div class="coins">
-
-    🪙
-
-    <span id="coins">
-        0
-    </span>
-
-    TeleGolub Coins
-
-            </div>
             🕊️ <span>TeleGolub</span>
+        </div>
+
+        <div class="coins">
+            🪙
+            <span id="coins">0</span>
+            TeleGolub Coins
         </div>
 
         <input
@@ -42,28 +37,20 @@
 
         <div id="searchResult"></div>
 
-        <h3 class="title">Чаты</h3>
+        <h3 class="title">
+            Чаты
+        </h3>
 
-        <div id="chatList" class="chat-list">
-
-            <div class="chat-item">
-                <div class="avatar"></div>
-
-                <div>
-
-                    <b>Добро пожаловать</b><br>
-
-                    <small>Выберите чат</small>
-
-                </div>
-
-            </div>
+        <div
+            id="chatList"
+            class="chat-list">
 
         </div>
 
     </aside>
 
     <!-- Правая часть -->
+
     <main class="main">
 
         <header class="header">
@@ -71,7 +58,7 @@
             <div>
 
                 <h2 id="username">
-                    Загрузка...
+                    TeleGolub
                 </h2>
 
                 <span class="status">
@@ -94,6 +81,14 @@
 
         <div class="send">
 
+            <button
+                class="gift-btn"
+                onclick="openGiftStore()">
+
+                🎁
+
+            </button>
+
             <input
                 id="message"
                 type="text"
@@ -110,11 +105,44 @@
 
 </div>
 
-<script type="module" src="js/app.js"></script>
-<script type="module" src="js/auth.js"></script>
-<script type="module" src="js/search.js"></script>
-    <script type="module" src="js/chat.js"></script>
+<!-- Магазин подарков -->
+
+<div
+    id="giftStore"
+    class="gift-store">
+
+    <div class="gift-window">
+
+        <div class="gift-header">
+
+            <h2>🎁 TeleGolub Gifts</h2>
+
+            <button onclick="closeGiftStore()">
+
+                ✕
+
+            </button>
+
+        </div>
+
+        <div
+            id="giftList"
+            class="gift-list">
+
+        </div>
+
+    </div>
+
+</div>
+
+<script type="module" src="js/firebase.js"></script>
 <script type="module" src="js/coins.js"></script>
-    
+<script type="module" src="js/gifts.js"></script>
+<script type="module" src="js/chats.js"></script>
+<script type="module" src="js/chat.js"></script>
+<script type="module" src="js/search.js"></script>
+<script type="module" src="js/auth.js"></script>
+<script type="module" src="js/app.js"></script>
+
 </body>
 </html>

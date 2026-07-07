@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Инвентарь | TeleGolub</title>
+
+<link rel="stylesheet" href="css/inventory.css">
+
+</head>
+<body>
+
+<div class="inventory-page">
+
+    <div class="inventory-header">
+
+        <h1>🎁 Мои подарки</h1>
+
+        <p>Коллекция TeleGolub Gifts</p>
+
+    </div>
+
+    <div class="tabs">
+
+        <button class="tab active" onclick="loadInventory('basic')">
+            🎁 Базовые
+        </button>
+
+        <button class="tab" onclick="loadInventory('collectible')">
+            💎 Коллекционные
+        </button>
+
+        <button class="tab" onclick="loadInventory('nft')">
+            🖼️ NFT
+        </button>
+
+    </div>
+
+    <div id="inventoryList" class="inventory-list">
+
+    </div>
+
+    <button class="back" onclick="location.href='index.html'">
+        ← Назад
+    </button>
+
+</div>
+
+<script type="module" src="js/inventory.js"></script>
+
+</body>
+</html>

@@ -29,10 +29,15 @@ window.createChat = async function(friendUid){
     if(!chatSnap.exists()){
 
         await setDoc(chatRef,{
+
             members:[myUid,friendUid],
+
             createdAt:serverTimestamp(),
+
             lastMessage:"",
+
             lastTime:serverTimestamp()
+
         });
 
     }
@@ -47,49 +52,33 @@ window.openChat = async function(chatId){
 
     const messages = document.getElementById("messages");
 
-    messages.innerHTML="";
+    messages.innerHTML = "";
 
     if(unsubscribe){
+
         unsubscribe();
-    }
-
-    const chatSnap = await getDoc(doc(db,"chats",chatId));
-
-    if(chatSnap.exists()){
-
-        const chat = chatSnap.data();
-
-        const friendUid = chat.members.find(
-            uid => uid !== auth.currentUser.uid
-        );
-
-        const userSnap = await getDoc(doc(db,"users",friendUid));
-
-        if(userSnap.exists()){
-
-            document.getElementById("username").textContent =
-            userSnap.data().name;
-
-        }
 
     }
 
-    const q=query(
+    const q = query(
+
         collection(db,"chats",chatId,"messages"),
+
         orderBy("time")
+
     );
 
-    unsubscribe=onSnapshot(q,(snapshot)=>{
+    unsubscribe = onSnapshot(q,(snapshot)=>{
 
-        messages.innerHTML="";
+        messages.innerHTML = "";
 
         snapshot.forEach((document)=>{
 
-            const data=document.data();
+            const data = document.data();
 
-            const div=document.createElement("div");
+            const div = document.createElement("div");
 
-            div.className="message";
+            div.className = "message";
 
             if(data.sender===auth.currentUser.uid){
 
@@ -97,41 +86,79 @@ window.openChat = async function(chatId){
 
             }
 
-            let time="";
+            // 🎁 Подарок
+            if(data.type==="gift"){
 
-            if(data.time?.seconds){
+                div.innerHTML = `
 
-                const date=new Date(data.time.seconds*1000);
+                <div class="gift-message">
 
-                time=date.toLocaleTimeString("ru-RU",{
+                    <div class="gift-big">
 
-                    hour:"2-digit",
+                        ${data.giftEmoji}
 
-                    minute:"2-digit"
+                    </div>
 
-                });
+                    <div>
+
+                        <b>${data.giftName}</b>
+
+                        <br>
+
+                        🎁 Подарок
+
+                    </div>
+
+                </div>
+
+                `;
 
             }
 
-            div.innerHTML=`
+            // 💬 Текст
+            else{
 
-                <div>${data.text}</div>
+                let time="";
 
-                <small class="msg-time">${time}</small>
+                if(data.time?.seconds){
 
-            `;
+                    const date=new Date(data.time.seconds*1000);
+
+                    time=date.toLocaleTimeString("ru-RU",{
+
+                        hour:"2-digit",
+
+                        minute:"2-digit"
+
+                    });
+
+                }
+
+                div.innerHTML = `
+
+                    <div>${data.text}</div>
+
+                    <small class="msg-time">
+
+                        ${time}
+
+                    </small>
+
+                `;
+
+            }
 
             messages.appendChild(div);
 
         });
 
-        messages.scrollTop=messages.scrollHeight;
+        messages.scrollTop = messages.scrollHeight;
 
     });
 
 }
 
-window.sendChatMessage=async function(text){
+window.sendChatMessage = async function(text){
 
     if(!window.currentChat) return;
 
@@ -140,6 +167,8 @@ window.sendChatMessage=async function(text){
         collection(db,"chats",window.currentChat,"messages"),
 
         {
+
+            type:"text",
 
             sender:auth.currentUser.uid,
 
@@ -171,4 +200,4 @@ window.sendChatMessage=async function(text){
 
     );
 
-}
+               }

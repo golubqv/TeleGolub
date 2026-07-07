@@ -1,77 +1,120 @@
 import { auth, db } from "./firebase.js";
 
 import {
-    collection,
-    query,
-    where,
-    onSnapshot,
     doc,
-    getDoc
+    getDoc,
+    setDoc,
+    collection,
+    addDoc,
+    query,
+    orderBy,
+    onSnapshot,
+    serverTimestamp
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-window.loadChats = function () {
+window.currentChat = null;
 
-    const list = document.getElementById("chatList");
+let unsubscribe = null;
 
-    const q = query(
-        collection(db, "chats"),
-        where("members", "array-contains", auth.currentUser.uid)
-    );
+window.createChat = async function(friendUid){
 
-    onSnapshot(q, async (snapshot) => {
+    const myUid = auth.currentUser.uid;
 
-        list.innerHTML = "";
+    const chatId = [myUid, friendUid].sort().join("_");
 
-        for (const chatDoc of snapshot.docs) {
+    const chatRef = doc(db,"chats",chatId);
 
-            const chat = chatDoc.data();
+    const chatSnap = await getDoc(chatRef);
 
-            const friendUid = chat.members.find(
-                uid => uid !== auth.currentUser.uid
-            );
+    if(!chatSnap.exists()){
 
-            if (!friendUid) continue;
+        await setDoc(chatRef,{
+            members:[myUid,friendUid],
+            createdAt:serverTimestamp(),
+            lastMessage:"",
+            lastTime:serverTimestamp()
+        });
 
-            const userSnap = await getDoc(
-                doc(db, "users", friendUid)
-            );
+    }
 
-            if (!userSnap.exists()) continue;
+    openChat(chatId);
+
+}
+
+window.openChat = async function(chatId){
+
+    window.currentChat = chatId;
+
+    const messages = document.getElementById("messages");
+
+    messages.innerHTML="";
+
+    if(unsubscribe){
+        unsubscribe();
+    }
+
+    const chatSnap = await getDoc(doc(db,"chats",chatId));
+
+    if(chatSnap.exists()){
+
+        const chat = chatSnap.data();
+
+        const friendUid = chat.members.find(
+            uid => uid !== auth.currentUser.uid
+        );
+
+        const userSnap = await getDoc(
+            doc(db,"users",friendUid)
+        );
+
+        if(userSnap.exists()){
 
             const user = userSnap.data();
 
-            list.innerHTML += `
-
-            <div
-                class="chat-item"
-                onclick="openChat('${chatDoc.id}')">
-
-                <div class="avatar">
-
-                    ${user.name.charAt(0).toUpperCase()}
-
-                </div>
-
-                <div class="chat-info">
-
-                    <b>${user.name}</b>
-
-                    <br>
-
-                    <small>
-
-                        ${chat.lastMessage || "Начните общение"}
-
-                    </small>
-
-                </div>
-
-            </div>
-
-            `;
+            document.getElementById("username").textContent = user.name;
 
         }
+
+    }
+
+    const q=query(
+        collection(db,"chats",chatId,"messages"),
+        orderBy("time")
+    );
+
+    unsubscribe = onSnapshot(q,(snapshot)=>{
+
+        messages.innerHTML="";
+
+        snapshot.forEach((document)=>{
+
+            const data=document.data();
+
+            const div=document.createElement("div");
+
+            div.className="message";
+
+            if(data.sender===auth.currentUser.uid){
+                div.classList.add("me");
+            }
+
+            div.textContent=data.text;
+
+            messages.appendChild(div);
+
+        });
+
+        messages.scrollTop = messages.scrollHeight;
 
     });
 
 }
+
+window.sendChatMessage = async function(text){
+
+    if(!window.currentChat) return;
+
+    await addDoc(
+        collection(db,"chats",window.currentChat,"messages"),
+        {
+            sender:auth.currentUser.uid,

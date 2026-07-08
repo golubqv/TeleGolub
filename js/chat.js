@@ -86,6 +86,26 @@ window.openChat=function(chatId,friend){
         snapshot=>{
 
             messages.innerHTML="";
+            messageDiv.innerHTML = `
+    <div class="message-text">${text}</div>
+
+    <div class="message-reactions"
+         id="reactions-${doc.id}">
+    </div>
+
+    <div class="msg-time">${time}</div>
+`;
+            messageDiv.addEventListener("contextmenu",(e)=>{
+
+    e.preventDefault();
+
+    openReactionMenu(
+        doc.id,
+        e.pageX,
+        e.pageY
+    );
+
+});
 
             snapshot.forEach(msg=>{
 

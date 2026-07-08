@@ -86,6 +86,20 @@
                 🎁
 
             </button>
+            <input
+type="file"
+id="imageInput"
+accept="image/*"
+style="display:none"
+onchange="sendImage(this.files[0])">
+
+<button
+class="gift-btn"
+onclick="document.getElementById('imageInput').click()">
+
+📷
+
+</button>
 
             <input
                 id="message"

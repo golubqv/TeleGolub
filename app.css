@@ -1,5 +1,6 @@
 @import url("theme.css");
 @import url("messages.css");
+@import url("sidebar.css");
 
 .app{
 display:flex;

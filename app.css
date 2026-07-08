@@ -1,6 +1,11 @@
 @import url("theme.css");
 @import url("messages.css");
 @import url("sidebar.css");
+@import url("chat.css");
+@import url("animations.css");
+@import url("profile.css");
+@import url("mobile.css");
+``
 
 .app{
 display:flex;

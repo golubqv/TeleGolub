@@ -1,253 +1,80 @@
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Arial,sans-serif;
-}
-
-body{
-background:#0f172a;
-height:100vh;
-overflow:hidden;
-}
+@import url("theme.css");
 
 .app{
 display:flex;
 height:100vh;
+width:100%;
+background:transparent;
 }
 
+/* ================= SIDEBAR ================= */
+
 .sidebar{
-width:340px;
-background:#1e293b;
+
+width:360px;
+background:rgba(23,33,43,.88);
+
+backdrop-filter:blur(20px);
+
+border-right:1px solid var(--border);
+
 display:flex;
 flex-direction:column;
-border-right:1px solid #334155;
+
 }
 
 .logo{
-padding:20px;
-font-size:30px;
-font-weight:bold;
-color:#60a5fa;
+
+height:72px;
+
+display:flex;
+align-items:center;
+
+padding:0 24px;
+
+font-size:28px;
+font-weight:700;
+
+gap:12px;
+
+color:white;
+
+border-bottom:1px solid var(--border);
+
 }
 
 .logo span{
-vertical-align:middle;
+
+font-weight:800;
+
+letter-spacing:.5px;
+
 }
 
-.search{
-margin:0 15px 15px;
-padding:12px;
-border:none;
-outline:none;
-border-radius:12px;
-background:#334155;
-color:white;
-font-size:15px;
-}
+.coins{
 
-#searchResult{
-max-height:220px;
-overflow-y:auto;
-}
+margin:18px;
 
-.user-card{
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:12px 15px;
-border-bottom:1px solid #334155;
-color:white;
-}
-
-.user-card button{
-background:#3b82f6;
-border:none;
-color:white;
-padding:8px 12px;
-border-radius:8px;
-cursor:pointer;
-}
-
-.title{
-padding:15px;
-color:#94a3b8;
-font-size:15px;
-}
-
-.chat-list{
-overflow-y:auto;
-flex:1;
-}
-
-.chat-item{
-display:flex;
-gap:12px;
-padding:15px;
-cursor:pointer;
-color:white;
-transition:.2s;
-}
-
-.chat-item:hover{
-background:#334155;
-}
-
-.avatar{
-width:50px;
-height:50px;
-border-radius:50%;
-background:#60a5fa;
-flex-shrink:0;
-}
-
-.main{
-flex:1;
-display:flex;
-flex-direction:column;
-background:#0f172a;
-}
-
-.header{
-height:70px;
-padding:15px 20px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-background:#1e293b;
-border-bottom:1px solid #334155;
-color:white;
-}
-
-.status{
-color:#22c55e;
-font-size:14px;
-}
-
-.header button{
-padding:10px 18px;
-border:none;
-border-radius:10px;
-background:#ef4444;
-color:white;
-cursor:pointer;
-}
-
-.messages{
-flex:1;
-overflow-y:auto;
-padding:20px;
-display:flex;
-flex-direction:column;
-gap:12px;
-}
-
-.message{
-max-width:70%;
-padding:12px 16px;
-border-radius:18px;
-background:#334155;
-color:white;
-}
-
-.me{
-align-self:flex-end;
-background:#2563eb;
-}
-
-.send{
-display:flex;
-gap:10px;
-padding:15px;
-background:#1e293b;
-}
-
-.send input{
-flex:1;
-padding:14px;
-border:none;
-outline:none;
-border-radius:12px;
-background:#334155;
-color:white;
-}
-
-.send button{
-padding:0 24px;
-border:none;
-border-radius:12px;
-background:#2563eb;
-color:white;
-font-size:18px;
-cursor:pointer;
-.message{
-position:relative;
-padding:12px 16px 24px;
-}
-
-.msg-time{
-position:absolute;
-right:10px;
-bottom:6px;
-font-size:11px;
-opacity:.7;
-}
-  .chat-image{
-
-max-width:260px;
+padding:16px;
 
 border-radius:18px;
 
-cursor:pointer;
-
-transition:.2s;
-
-}
-
-.chat-image:hover{
-
-transform:scale(1.02);
-
-}
-  .message-checks{
-
-margin-top:6px;
-
-font-size:12px;
-
-opacity:.7;
-
-text-align:right;
-
-  }
-
-.me .msg-time{
-color:#dbeafe;
-  .coins{
+background:linear-gradient(
+135deg,
+#2563eb,
+#38bdf8
+);
 
 display:flex;
-
-align-items:center;
-
 justify-content:center;
+align-items:center;
+gap:10px;
 
-gap:8px;
+font-size:18px;
 
-margin:15px;
+font-weight:700;
 
-padding:14px;
-
-border-radius:16px;
-
-background:linear-gradient(135deg,#2563eb,#1d4ed8);
-
-color:white;
-
-font-weight:bold;
-
-font-size:17px;
-
-box-shadow:0 10px 25px rgba(37,99,235,.35);
+box-shadow:0 15px 30px rgba(37,99,235,.35);
 
 transition:.25s;
 
@@ -255,82 +82,192 @@ transition:.25s;
 
 .coins:hover{
 
-transform:scale(1.03);
-
-cursor:pointer;
+transform:translateY(-3px);
 
 }
 
-#coins{
+.search{
 
-font-size:22px;
+margin:0 18px 18px;
 
-font-weight:800;
+padding:15px 18px;
 
-}
-  .gift-btn{
+background:#253548;
 
-width:55px;
+border-radius:16px;
 
-border:none;
+font-size:15px;
 
-border-radius:14px;
-
-background:#f59e0b;
-
-font-size:22px;
-
-cursor:pointer;
+color:white;
 
 }
 
-.gift-store{
+.search::placeholder{
 
-position:fixed;
-
-left:0;
-
-top:0;
-
-width:100%;
-
-height:100%;
-
-background:rgba(0,0,0,.6);
-
-display:none;
-
-justify-content:center;
-
-align-items:center;
-
-z-index:999;
+color:#8ea7c2;
 
 }
 
-.gift-window{
+#searchResult{
 
-width:850px;
-
-max-width:95%;
-
-height:650px;
-
-background:#111827;
-
-border-radius:25px;
+margin:0 18px;
 
 display:flex;
 
 flex-direction:column;
 
+gap:8px;
+
+}
+
+.title{
+
+padding:22px 24px 12px;
+
+font-size:13px;
+
+text-transform:uppercase;
+
+letter-spacing:1px;
+
+color:#7c8ea5;
+
+}
+
+.chat-list{
+
+flex:1;
+
+overflow-y:auto;
+
+padding:0 10px 15px;
+
+}
+
+/* ================= CHAT CARD ================= */
+
+.chat-item{
+
+display:flex;
+
+align-items:center;
+
+gap:14px;
+
+padding:14px;
+
+margin-bottom:6px;
+
+border-radius:18px;
+
+cursor:pointer;
+
+transition:.2s;
+
+}
+
+.chat-item:hover{
+
+background:#253548;
+
+}
+
+.avatar{
+
+width:56px;
+
+height:56px;
+
+border-radius:50%;
+
+background:linear-gradient(
+135deg,
+#3390ec,
+#60a5fa
+);
+
+display:flex;
+
+justify-content:center;
+align-items:center;
+
+font-weight:bold;
+
+font-size:20px;
+
+color:white;
+
+flex-shrink:0;
+
+}
+
+.chat-info{
+
+flex:1;
+
 overflow:hidden;
 
 }
 
-.gift-header{
+.chat-name{
 
-padding:20px;
+font-weight:700;
+
+font-size:16px;
+
+white-space:nowrap;
+
+overflow:hidden;
+
+text-overflow:ellipsis;
+
+}
+
+.chat-last{
+
+margin-top:5px;
+
+font-size:14px;
+
+color:#94a3b8;
+
+white-space:nowrap;
+
+overflow:hidden;
+
+text-overflow:ellipsis;
+
+}
+
+/* ================= MAIN ================= */
+
+.main{
+
+flex:1;
+
+display:flex;
+
+flex-direction:column;
+
+background:
+
+linear-gradient(
+
+180deg,
+
+#17212b,
+
+#111827
+
+);
+
+}
+
+/* ================= HEADER ================= */
+
+.header{
+
+height:72px;
 
 display:flex;
 
@@ -338,126 +275,135 @@ justify-content:space-between;
 
 align-items:center;
 
-background:#1f2937;
+padding:0 25px;
 
-color:white;
+border-bottom:1px solid var(--border);
 
-}
+background:rgba(23,33,43,.75);
 
-.gift-header button{
-
-background:none;
-
-border:none;
-
-font-size:24px;
-
-color:white;
-
-cursor:pointer;
+backdrop-filter:blur(16px);
 
 }
 
-.gift-list{
+.header h2{
 
-padding:20px;
-
-display:grid;
-
-grid-template-columns:repeat(auto-fill,minmax(170px,1fr));
-
-gap:18px;
-
-overflow:auto;
+font-size:22px;
 
 }
 
-.gift-card{
+.status{
 
-background:#1f2937;
+font-size:14px;
 
-border-radius:20px;
+color:#22c55e;
 
-padding:20px;
-
-text-align:center;
-
-transition:.25s;
+margin-top:4px;
 
 }
 
-.gift-card:hover{
+/* ================= MESSAGES ================= */
 
-transform:translateY(-6px);
+.messages{
+
+flex:1;
+
+padding:24px;
+
+overflow-y:auto;
+
+display:flex;
+
+flex-direction:column;
+
+gap:14px;
+
+background-image:
+
+radial-gradient(
+
+rgba(255,255,255,.02) 1px,
+
+transparent 1px
+
+);
+
+background-size:28px 28px;
 
 }
 
-.gift-emoji{
+/* ================= SEND ================= */
 
-font-size:64px;
+.send{
 
-margin-bottom:10px;
-
-}
-
-.gift-card h3{
-
-color:white;
-
-margin:10px 0;
-
-}
-
-.gift-card p{
-
-color:#9ca3af;
-
-margin-bottom:12px;
-
-}
-
-.gift-card button{
-
-width:100%;
-
-padding:10px;
-
-background:#2563eb;
-
-border:none;
-
-border-radius:12px;
-
-color:white;
-
-cursor:pointer;
-
-.gift-message{
+padding:18px;
 
 display:flex;
 
 align-items:center;
 
-gap:15px;
+gap:12px;
 
-padding:12px;
+border-top:1px solid var(--border);
+
+background:rgba(17,24,39,.88);
+
+backdrop-filter:blur(18px);
+
+}
+
+.send input{
+
+flex:1;
+
+height:52px;
+
+padding:0 18px;
 
 border-radius:18px;
 
-background:linear-gradient(135deg,#1e3a8a,#2563eb);
+background:#243447;
+
+font-size:15px;
 
 color:white;
 
 }
 
-.gift-big{
+.send button{
 
-font-size:60px;
+height:52px;
 
-                           }
-  .user-status{
-    color:#94a3b8;
-    font-size:14px;
-    margin-top:4px;
-  }
+min-width:52px;
+
+border-radius:16px;
+
+background:#3390ec;
+
+font-size:22px;
+
+color:white;
+
+transition:.2s;
+
+}
+
+.send button:hover{
+
+background:#4ba3ff;
+
+transform:scale(1.05);
+
+}
+
+.gift-btn{
+
+background:#f59e0b!important;
+
+}
+
+.gift-btn:hover{
+
+background:#fbbf24!important;
+
+}
   

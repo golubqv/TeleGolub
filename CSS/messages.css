@@ -40,6 +40,44 @@ box-shadow:
 
 }
 
+.message-reactions{
+
+display:flex;
+
+gap:6px;
+
+margin-top:8px;
+
+flex-wrap:wrap;
+
+}
+
+.reaction{
+
+padding:4px 10px;
+
+border-radius:999px;
+
+background:#2d4259;
+
+font-size:16px;
+
+cursor:pointer;
+
+transition:.2s;
+
+user-select:none;
+
+}
+
+.reaction:hover{
+
+transform:scale(1.15);
+
+background:#3d5877;
+
+}
+
 /* Полученные */
 
 .message:not(.me){

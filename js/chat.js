@@ -126,6 +126,17 @@ window.openChat=function(chatId,friend){
                     </div>
 
                     `;
+                    else if(data.type==="image"){
+
+    div.innerHTML = `
+
+        <img
+            src="${data.image}"
+            class="chat-image">
+
+    `;
+
+                                 }
 
                 }else{
 

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>👑 Owner Panel</title>
+
+<link rel="stylesheet" href="css/owner.css">
+
+</head>
+<body>
+
+<div class="owner">
+
+<h1>👑 TeleGolub Owner Panel</h1>
+
+<div class="card">
+
+<h2>🎁 Создать скидку</h2>
+
+<input
+id="giftId"
+placeholder="ID подарка">
+
+<input
+id="discount"
+type="number"
+placeholder="Скидка (%)">
+
+<input
+id="amount"
+type="number"
+placeholder="Количество">
+
+<button onclick="createSale()">
+
+Запустить распродажу
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>💎 TeleGolub Pro</h2>
+
+<input
+id="proDiscount"
+type="number"
+placeholder="Скидка (%)">
+
+<button onclick="createProSale()">
+
+Запустить скидку
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>📢 Событие</h2>
+
+<input
+id="eventTitle"
+placeholder="Название">
+
+<textarea
+id="eventText"
+placeholder="Описание"></textarea>
+
+<button onclick="publishEvent()">
+
+Опубликовать
+
+</button>
+
+</div>
+
+<div class="card">
+
+<h2>🎁 Выдать подарок</h2>
+
+<input
+id="userUid"
+placeholder="UID пользователя">
+
+<input
+id="giftGive"
+placeholder="ID подарка">
+
+<button onclick="giveGift()">
+
+Выдать подарок
+
+</button>
+
+</div>
+
+<button
+class="back"
+onclick="location.href='market.html'">
+
+← Назад
+
+</button>
+
+</div>
+
+<script type="module" src="js/owner.js"></script>
+
+</body>
+</html>

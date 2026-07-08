@@ -135,8 +135,24 @@ window.openChat=function(chatId,friend){
             class="chat-image">
 
     `;
+            
 
                                  }
+                else if(data.type==="voice"){
+
+    div.innerHTML=`
+
+    <audio controls>
+
+        <source
+        src="${data.audio}"
+        type="audio/webm">
+
+    </audio>
+
+    `;
+
+                }
 
                 }else{
 

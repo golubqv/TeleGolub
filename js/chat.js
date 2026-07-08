@@ -13,153 +13,145 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
 window.currentChat = null;
+window.friendUid = null;
 
-let unsubscribe = null;
+let unsubscribeMessages = null;
 
 window.createChat = async function(friendUid){
 
     const myUid = auth.currentUser.uid;
 
     const chatId = [myUid, friendUid].sort().join("_");
-    watchUserStatus(friendUid);
 
-    const chatRef = doc(db,"chats",chatId);
+    const ref = doc(db,"chats",chatId);
 
-    const chatSnap = await getDoc(chatRef);
+    const snap = await getDoc(ref);
 
-    if(!chatSnap.exists()){
+    if(!snap.exists()){
 
-        await setDoc(chatRef,{
-
+        await setDoc(ref,{
             members:[myUid,friendUid],
-
-            createdAt:serverTimestamp(),
-
-            lastMessage:"",
-
-            lastTime:serverTimestamp()
-
+            createdAt:serverTimestamp()
         });
 
     }
 
-    openChat(chatId);
+    openChat(chatId,friendUid);
 
 }
 
-window.openChat = async function(chatId){
+window.openChat=function(chatId,friend){
 
-    window.currentChat = chatId;
+    window.currentChat=chatId;
+    window.friendUid=friend;
 
-    const messages = document.getElementById("messages");
+    if(window.watchUserStatus){
 
-    messages.innerHTML = "";
-
-    if(unsubscribe){
-
-        unsubscribe();
+        watchUserStatus(friend);
 
     }
 
-    const q = query(
+    if(window.enableTyping){
 
-        collection(db,"chats",chatId,"messages"),
+        enableTyping(chatId);
 
-        orderBy("time")
+    }
 
-    );
+    if(window.watchTyping){
 
-    unsubscribe = onSnapshot(q,(snapshot)=>{
+        watchTyping(chatId,friend);
 
-        messages.innerHTML = "";
+    }
 
-        snapshot.forEach((document)=>{
+    const messages=document.getElementById("messages");
 
-            const data = document.data();
+    messages.innerHTML="";
 
-            const div = document.createElement("div");
+    if(unsubscribeMessages){
 
-            div.className = "message";
+        unsubscribeMessages();
 
-            if(data.sender===auth.currentUser.uid){
+    }
 
-                div.classList.add("me");
+    unsubscribeMessages=onSnapshot(
 
-            }
+        query(
 
-            // 🎁 Подарок
-            if(data.type==="gift"){
+            collection(db,"chats",chatId,"messages"),
 
-                div.innerHTML = `
+            orderBy("time")
 
-                <div class="gift-message">
+        ),
 
-                    <div class="gift-big">
+        snapshot=>{
 
-                        ${data.giftEmoji}
+            messages.innerHTML="";
 
-                    </div>
+            snapshot.forEach(msg=>{
 
-                    <div>
+                const data=msg.data();
 
-                        <b>${data.giftName}</b>
+                const div=document.createElement("div");
 
-                        <br>
+                div.className="message";
 
-                        🎁 Подарок
+                if(data.sender===auth.currentUser.uid){
 
-                    </div>
-
-                </div>
-
-                `;
-
-            }
-
-            // 💬 Текст
-            else{
-
-                let time="";
-
-                if(data.time?.seconds){
-
-                    const date=new Date(data.time.seconds*1000);
-
-                    time=date.toLocaleTimeString("ru-RU",{
-
-                        hour:"2-digit",
-
-                        minute:"2-digit"
-
-                    });
+                    div.classList.add("me");
 
                 }
 
-                div.innerHTML = `
+                if(data.type==="gift"){
 
-                    <div>${data.text}</div>
+                    div.innerHTML=`
 
-                    <small class="msg-time">
+                    <div class="gift-message">
 
-                        ${time}
+                        <div class="gift-big">
 
-                    </small>
+                            ${data.giftEmoji}
 
-                `;
+                        </div>
 
-            }
+                        <div>
 
-            messages.appendChild(div);
+                            <b>${data.giftName}</b>
 
-        });
+                            <br>
 
-        messages.scrollTop = messages.scrollHeight;
+                            🎁 Подарок
 
-    });
+                        </div>
+
+                    </div>
+
+                    `;
+
+                }else{
+
+                    div.innerHTML=data.text;
+
+                }
+
+                messages.appendChild(div);
+
+            });
+
+            messages.scrollTop=messages.scrollHeight;
+
+        }
+
+    );
 
 }
 
-window.sendChatMessage = async function(text){
+window.sendMessage=async function(){
+
+    const input=document.getElementById("message");
+
+    const text=input.value.trim();
+
+    if(text==="") return;
 
     if(!window.currentChat) return;
 
@@ -169,36 +161,22 @@ window.sendChatMessage = async function(text){
 
         {
 
-            type:"text",
-
             sender:auth.currentUser.uid,
 
             text:text,
 
-            time:serverTimestamp()
+            type:"text",
+
+            time:serverTimestamp(),
+
+            delivered:true,
+
+            read:false
 
         }
 
     );
 
-    await setDoc(
+    input.value="";
 
-        doc(db,"chats",window.currentChat),
-
-        {
-
-            lastMessage:text,
-
-            lastTime:serverTimestamp()
-
-        },
-
-        {
-
-            merge:true
-
-        }
-
-    );
-
-               }
+}

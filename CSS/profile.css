@@ -1,127 +1,238 @@
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Inter,Arial,sans-serif;
-}
-
-body{
-background:#0f172a;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
-}
+/* ===============================
+   PROFILE
+================================ */
 
 .profile{
-width:460px;
-background:#111827;
-border-radius:30px;
-overflow:hidden;
-box-shadow:0 20px 60px rgba(0,0,0,.45);
-animation:show .35s;
-}
 
-.cover{
-height:170px;
-background:linear-gradient(135deg,#2563eb,#60a5fa);
-}
-
-.avatar{
-width:130px;
-height:130px;
-border-radius:50%;
-background:#2563eb;
-border:6px solid #111827;
-margin:-65px auto 20px;
 display:flex;
+
+flex-direction:column;
+
 align-items:center;
+
+padding:35px 25px;
+
+background:linear-gradient(
+180deg,
+#1e293b,
+#17212b
+);
+
+border-radius:24px;
+
+box-shadow:
+0 15px 40px rgba(0,0,0,.35);
+
+}
+
+/* Аватар */
+
+.profile-avatar{
+
+width:130px;
+
+height:130px;
+
+border-radius:50%;
+
+background:linear-gradient(
+135deg,
+#3390ec,
+#60a5fa
+);
+
+display:flex;
+
 justify-content:center;
-font-size:56px;
-color:white;
+
+align-items:center;
+
+font-size:54px;
+
 font-weight:bold;
-}
 
-h1{
-text-align:center;
 color:white;
-font-size:32px;
+
+margin-bottom:20px;
+
+box-shadow:
+0 12px 35px rgba(51,144,236,.35);
+
 }
 
-#username{
-text-align:center;
-margin-top:8px;
-color:#60a5fa;
-font-size:18px;
-}
+/* Имя */
 
-#bio{
-margin:25px;
-text-align:center;
-color:#cbd5e1;
-line-height:1.6;
-min-height:55px;
-}
+.profile-name{
 
-.stats{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:15px;
-padding:0 25px 30px;
-}
-
-.card{
-background:#1f2937;
-padding:18px;
-border-radius:18px;
-text-align:center;
-transition:.25s;
-}
-
-.card:hover{
-transform:translateY(-4px);
-}
-
-.card h2{
-color:white;
 font-size:28px;
-}
 
-.card span{
-display:block;
-margin-top:8px;
-color:#94a3b8;
-font-size:14px;
-}
+font-weight:700;
 
-button{
-width:calc(100% - 50px);
-margin:0 25px 25px;
-padding:16px;
-background:#2563eb;
 color:white;
-border:none;
+
+margin-bottom:6px;
+
+}
+
+/* Username */
+
+.profile-username{
+
+color:#94a3b8;
+
+font-size:16px;
+
+margin-bottom:22px;
+
+}
+
+/* Статистика */
+
+.profile-stats{
+
+display:grid;
+
+grid-template-columns:repeat(2,1fr);
+
+gap:15px;
+
+width:100%;
+
+margin-bottom:25px;
+
+}
+
+.profile-stat{
+
+background:#243447;
+
+padding:18px;
+
+border-radius:18px;
+
+text-align:center;
+
+transition:.2s;
+
+}
+
+.profile-stat:hover{
+
+transform:translateY(-4px);
+
+background:#2d4259;
+
+}
+
+.profile-stat h3{
+
+font-size:26px;
+
+color:#3390ec;
+
+margin-bottom:8px;
+
+}
+
+.profile-stat span{
+
+color:#cbd5e1;
+
+font-size:14px;
+
+}
+
+/* Меню */
+
+.profile-menu{
+
+width:100%;
+
+display:flex;
+
+flex-direction:column;
+
+gap:10px;
+
+}
+
+.profile-item{
+
+display:flex;
+
+align-items:center;
+
+gap:15px;
+
+padding:16px 18px;
+
+background:#243447;
+
 border-radius:16px;
-font-size:17px;
-font-weight:bold;
+
 cursor:pointer;
-transition:.25s;
+
+transition:.2s;
+
 }
 
-button:hover{
-background:#3b82f6;
+.profile-item:hover{
+
+background:#2d4259;
+
+transform:translateX(5px);
+
 }
 
-@keyframes show{
+.profile-item i{
 
-from{
-opacity:0;
-transform:scale(.95);
+font-size:20px;
+
+width:24px;
+
+text-align:center;
+
+color:#3390ec;
+
 }
 
-to{
-opacity:1;
-transform:scale(1);
+.profile-item span{
+
+font-size:16px;
+
+color:white;
+
+font-weight:500;
+
 }
 
-  }
+/* Premium */
+
+.profile-premium{
+
+margin-top:25px;
+
+padding:16px;
+
+width:100%;
+
+border-radius:18px;
+
+background:linear-gradient(
+135deg,
+#f59e0b,
+#fbbf24
+);
+
+color:white;
+
+text-align:center;
+
+font-size:18px;
+
+font-weight:700;
+
+box-shadow:
+0 10px 30px rgba(245,158,11,.35);
+
+}

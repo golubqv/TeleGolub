@@ -1,171 +1,523 @@
 <!DOCTYPE html>
 <html lang="ru">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
 
 <title>TeleGolub</title>
 
-<link rel="stylesheet" href="css/app.css">
+<link rel="preconnect"
+href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+href="https://fonts.gstatic.com"
+crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+rel="stylesheet">
+
+<link rel="stylesheet"
+href="css/app.css">
 
 </head>
+
 <body>
 
 <div class="app">
 
-    <!-- Левая панель -->
-    <aside class="sidebar">
+<!-- ================= SIDEBAR ================= -->
 
-        <div class="logo">
-            🕊️ <span>TeleGolub</span>
-        </div>
+<aside class="sidebar">
 
-        <div class="coins">
-            🪙
-            <span id="coins">0</span>
-            TeleGolub Coins
-        </div>
+<div class="sidebar-top">
 
-        <input
-            id="search"
-            class="search"
-            type="text"
-            placeholder="Поиск по @username"
-            oninput="searchUser()"
-        >
+<div class="logo">
 
-        <div id="searchResult"></div>
+<div class="logo-icon">
 
-        <h3 class="title">
-            Чаты
-        </h3>
-
-        <div
-            id="chatList"
-            class="chat-list">
-        </div>
-
-    </aside>
-
-    <!-- Правая часть -->
-
-    <main class="main">
-
-        <header class="header">
-
-            <div>
-
-                <h2 id="username">
-                    TeleGolub
-                </h2>
-
-                <div id="userStatus" class="status">
-                    ⚫ Был недавно
-                </div>
-
-            </div>
-
-            <button onclick="logout()">
-                Выйти
-            </button>
-
-        </header>
-
-        <div
-            id="messages"
-            class="messages">
-        </div>
-
-        <div class="send">
-
-            <button
-                class="gift-btn"
-                onclick="openGiftStore()">
-
-                🎁
-
-            </button>
-            <input
-type="file"
-id="imageInput"
-accept="image/*"
-style="display:none"
-onchange="sendImage(this.files[0])">
-
-<button
-class="gift-btn"
-onclick="document.getElementById('imageInput').click()">
-
-📷
-
-</button>
-            <button
-id="voiceBtn"
-class="gift-btn"
-onclick="voiceClick()">
-
-🎤
-
-            </button>
-
-            <input
-                id="message"
-                type="text"
-                placeholder="Введите сообщение..."
-            >
-
-            <button onclick="sendMessage()">
-                ➤
-            </button>
-
-        </div>
-
-    </main>
+🕊️
 
 </div>
 
-<!-- Магазин подарков -->
+<div class="logo-text">
+
+<h2>TeleGolub</h2>
+
+<span>Messenger</span>
+
+</div>
+
+</div>
+
+<div class="coins-card">
+
+<div>
+
+<div class="coins-title">
+
+TeleGolub Coins
+
+</div>
 
 <div
-    id="giftStore"
-    class="gift-store">
+class="coins-value">
 
-    <div class="gift-window">
+🪙
+<span id="coins">
 
-        <div class="gift-header">
+0
 
-            <h2>🎁 TeleGolub Gifts</h2>
+</span>
 
-            <button onclick="closeGiftStore()">
-                ✕
+</div>
+
+</div>
+
+<button
+class="wallet-button">
+
++
+
+</button>
+
+</div>
+
+<div class="search-box">
+
+<input
+
+id="search"
+
+type="text"
+
+placeholder="Поиск..."
+
+oninput="searchUser()"
+
+>
+
+</div>
+
+<div
+
+id="searchResult"
+
+class="search-result">
+
+</div>
+
+</div>
+
+<div class="chat-header">
+
+<span>
+
+ЧАТЫ
+
+</span>
+
+<button>
+
+＋
+
+</button>
+
+</div>
+
+<div
+
+id="chatList"
+
+class="chat-list">
+
+<!-- Firebase -->
+
+</div>
+
+<div class="sidebar-bottom">
+
+<div class="profile-preview">
+
+<div class="profile-avatar">
+
+👤
+
+</div>
+
+<div>
+
+<div id="username">
+
+TeleGolub
+
+</div>
+
+<div class="online">
+
+🟢 В сети
+
+</div>
+
+</div>
+
+</div>
+
+<button
+
+class="settings-button"
+
+onclick="logout()">
+
+Выйти
+
+</button>
+
+</div>
+
+</aside>
+
+<!-- ================= CHAT ================= -->
+
+<main class="main">
+
+<!-- ================= HEADER ================= -->
+
+<header class="chat-header-top">
+
+    <div class="chat-user">
+
+        <div class="chat-avatar">
+
+            👤
+
+        </div>
+
+        <div class="chat-user-info">
+
+            <h2 id="chatTitle">
+
+                TeleGolub
+
+            </h2>
+
+            <span
+            id="userStatus">
+
+                🟢 В сети
+
+            </span>
+
+        </div>
+
+    </div>
+
+    <div class="chat-actions">
+
+        <button class="icon-button">
+
+            📞
+
+        </button>
+
+        <button class="icon-button">
+
+            📹
+
+        </button>
+
+        <button class="icon-button">
+
+            🔍
+
+        </button>
+
+        <button class="icon-button">
+
+            ⋮
+
+        </button>
+
+    </div>
+
+</header>
+
+<!-- ================= MESSAGES ================= -->
+
+<div
+id="messages"
+class="messages">
+
+<!-- Firebase -->
+
+</div>
+
+<!-- ================= REPLY ================= -->
+
+<div
+id="replyBox"
+class="reply-box"
+
+style="display:none;">
+
+<div class="reply-line"></div>
+
+<div class="reply-content">
+
+<div
+id="replyName">
+
+Ответ
+
+</div>
+
+<div
+id="replyText">
+
+...
+
+</div>
+
+</div>
+
+<button
+class="reply-close">
+
+✕
+
+</button>
+
+</div>
+
+<!-- ================= INPUT ================= -->
+
+<div class="send-panel">
+
+<button
+class="input-button">
+
+😊
+
+</button>
+
+<button
+class="input-button">
+
+📎
+
+</button>
+
+<button
+class="gift-button"
+
+onclick="openGiftStore()">
+
+🎁
+
+</button>
+
+<input
+
+id="message"
+
+type="text"
+
+placeholder="Введите сообщение..."
+
+>
+
+<button
+
+class="send-button"
+
+onclick="sendMessage()">
+
+➤
+
+</button>
+
+</div>
+
+<!-- ================= GIFT STORE ================= -->
+
+<div
+
+id="giftStore"
+
+class="gift-store">
+
+<div class="gift-window">
+
+<div class="gift-window-header">
+
+<h2>
+
+🎁 TeleGolub Gifts
+
+</h2>
+
+<button
+
+onclick="closeGiftStore()">
+
+✕
+
+</button>
+
+</div>
+
+<div
+
+id="giftList"
+
+class="gift-list">
+
+</div>
+
+</div>
+
+    </div>
+
+    <!-- ================= IMAGE VIEWER ================= -->
+
+<div id="imageViewer" class="image-viewer">
+
+    <button
+        class="viewer-close"
+        onclick="closeImageViewer()">
+
+        ✕
+
+    </button>
+
+    <img
+        id="viewerImage"
+        src=""
+        alt="">
+
+</div>
+
+<!-- ================= PROFILE MODAL ================= -->
+
+<div id="profileModal" class="profile-modal">
+
+    <div class="profile-window">
+
+        <div class="profile-top">
+
+            <div class="profile-big-avatar">
+
+                👤
+
+            </div>
+
+            <h2 id="profileName">
+
+                TeleGolub User
+
+            </h2>
+
+            <span id="profileUsername">
+
+                @username
+
+            </span>
+
+        </div>
+
+        <div class="profile-buttons">
+
+            <button>
+
+                💬 Написать
+
+            </button>
+
+            <button>
+
+                🎁 Подарок
+
+            </button>
+
+            <button>
+
+                🚫 Заблокировать
+
             </button>
 
         </div>
 
-        <div
-            id="giftList"
-            class="gift-list">
-        </div>
+        <button
+            class="close-profile"
+            onclick="closeProfile()">
+
+            Закрыть
+
+        </button>
 
     </div>
 
 </div>
 
+<!-- ================= LOADER ================= -->
+
+<div id="loader" class="loader">
+
+    <div class="loader-logo">
+
+        🕊️
+
+    </div>
+
+    <div class="loader-text">
+
+        TeleGolub
+
+    </div>
+
+</div>
+
+<!-- ================= TOAST ================= -->
+
+<div id="toast" class="toast">
+
+    Готово
+
+</div>
+
+<!-- ================= JS ================= -->
+
 <script type="module" src="js/firebase.js"></script>
-<script type="module" src="js/coins.js"></script>
-<script type="module" src="js/gifts.js"></script>
-<script type="module" src="js/chats.js"></script>
-<script type="module" src="js/chat.js"></script>
-<script type="module" src="js/search.js"></script>
+
 <script type="module" src="js/auth.js"></script>
+
+<script type="module" src="js/chat.js"></script>
+
+<script type="module" src="js/chats.js"></script>
+
+<script type="module" src="js/search.js"></script>
+
+<script type="module" src="js/gifts.js"></script>
+
 <script type="module" src="js/sendGift.js"></script>
+
+<script type="module" src="js/coins.js"></script>
+
 <script type="module" src="js/presence.js"></script>
-<script type="module" src="js/userStatus.js"></script>
-    <script type="module" src="js/typing.js"></script>
-    <script type="module" src="js/readReceipts.js"></script>
-    <script type="module" src="js/voice.js"></script>
+
+<script type="module" src="js/reactions.js"></script>
+
+<script type="module" src="js/reply.js"></script>
+
 <script type="module" src="js/app.js"></script>
 
+</main>
+
+</div>
+
 </body>
-</html>
+
+    </html>

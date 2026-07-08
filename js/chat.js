@@ -129,7 +129,35 @@ window.openChat=function(chatId,friend){
 
                 }else{
 
-                    div.innerHTML=data.text;
+                    let checks = "";
+
+if(data.sender === auth.currentUser.uid){
+
+    if(data.read){
+
+        checks = " ✔✔";
+
+    }else if(data.delivered){
+
+        checks = " ✔";
+
+    }else{
+
+        checks = " ⏳";
+
+    }
+
+}
+
+div.innerHTML = `
+<div class="message-text">
+${data.text}
+</div>
+
+<div class="message-checks">
+${checks}
+</div>
+`;
 
                 }
 
@@ -138,6 +166,7 @@ window.openChat=function(chatId,friend){
             });
 
             messages.scrollTop=messages.scrollHeight;
+            markMessagesRead(chatId);
 
         }
 

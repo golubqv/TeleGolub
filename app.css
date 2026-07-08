@@ -192,6 +192,17 @@ bottom:6px;
 font-size:11px;
 opacity:.7;
 }
+  .message-checks{
+
+margin-top:6px;
+
+font-size:12px;
+
+opacity:.7;
+
+text-align:right;
+
+  }
 
 .me .msg-time{
 color:#dbeafe;

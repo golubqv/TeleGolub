@@ -9,97 +9,153 @@ import {
     getDoc
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
+/* ========================================= */
+
 window.loadChats = function () {
 
-    const list = document.getElementById("chatList");
+    const user = auth.currentUser;
+
+    if (!user) return;
+
+    const chatList = document.getElementById("chatList");
 
     const q = query(
+
         collection(db, "chats"),
-        where("members", "array-contains", auth.currentUser.uid)
+
+        where("members", "array-contains", user.uid)
+
     );
 
     onSnapshot(q, async (snapshot) => {
 
-        list.innerHTML = "";
+        chatList.innerHTML = "";
 
-        const chats = snapshot.docs;
+        if (snapshot.empty) {
 
-        chats.sort((a, b) => {
+            chatList.innerHTML = `
 
-            const ta = a.data().lastTime?.seconds || 0;
-            const tb = b.data().lastTime?.seconds || 0;
+            <div style="
+            padding:40px;
+            text-align:center;
+            color:#8fa2b8;
+            ">
 
-            return tb - ta;
+                💬
 
-        });
+                <br><br>
 
-        for (const chatDoc of chats) {
-
-            const chat = chatDoc.data();
-
-            const friendUid = chat.members.find(
-                uid => uid !== auth.currentUser.uid
-            );
-
-            if (!friendUid) continue;
-
-            const userSnap = await getDoc(
-                doc(db, "users", friendUid)
-            );
-
-            if (!userSnap.exists()) continue;
-
-            const user = userSnap.data();
-
-            let time = "";
-
-            if (chat.lastTime?.seconds) {
-
-                const date = new Date(chat.lastTime.seconds * 1000);
-
-                time = date.toLocaleTimeString("ru-RU", {
-                    hour: "2-digit",
-                    minute: "2-digit"
-                });
-
-            }
-
-            list.innerHTML += `
-
-            <div
-                class="chat-item"
-                onclick="openChat('${chatDoc.id}')">
-
-                <div class="avatar">
-
-                    ${user.name.charAt(0).toUpperCase()}
-
-                </div>
-
-                <div class="chat-info">
-
-                    <div style="display:flex;justify-content:space-between;">
-
-                        <b>${user.name}</b>
-
-                        <small>${time}</small>
-
-                    </div>
-
-                    <small>
-
-                        ${chat.lastMessage || "Начните общение"}
-
-                    </small>
-
-                </div>
+                У вас пока нет чатов
 
             </div>
 
             `;
 
+            return;
+
+        }
+
+        for (const chat of snapshot.docs) {
+
+            const data = chat.data();
+
+            const friend = data.members.find(id => id !== user.uid);
+
+            const userRef = await getDoc(doc(db, "users", friend));
+
+            if (!userRef.exists()) continue;
+
+            const u = userRef.data();
+
+            const item = document.createElement("div");
+
+            item.className = "chat-item fade";
+
+            item.onclick = () => {
+
+                openChat(chat.id, friend);
+
+                document
+
+                    .querySelectorAll(".chat-item")
+
+                    .forEach(x => x.classList.remove("active"));
+
+                item.classList.add("active");
+
+            };
+
+            const avatar =
+
+                u.photoURL
+
+                ? `<img class="chat-avatar" src="${u.photoURL}">`
+
+                : `<div class="chat-avatar">
+                        ${(u.username || "?")[0].toUpperCase()}
+                   </div>`;
+
+            item.innerHTML = `
+
+                ${avatar}
+
+                <div class="chat-info">
+
+                    <div class="chat-name">
+
+                        ${u.username}
+
+                    </div>
+
+                    <div class="chat-last">
+
+                        ${
+                            data.lastMessage
+                            || "Начните общение"
+                        }
+
+                    </div>
+
+                </div>
+
+                <div class="chat-right">
+
+                    <div class="chat-time">
+
+                        ${
+                            data.lastTime || ""
+                        }
+
+                    </div>
+
+                    ${
+                        data.unread
+                        ? `<div class="unread">
+                                ${data.unread}
+                           </div>`
+                        : ""
+                    }
+
+                </div>
+
+            `;
+
+            chatList.appendChild(item);
+
         }
 
     });
 
-}
+};
+
+/* ========================================= */
+
+auth.onAuthStateChanged(user => {
+
+    if (user) {
+
+        loadChats();
+
+    }
+
+});

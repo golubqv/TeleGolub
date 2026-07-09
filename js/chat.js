@@ -1,258 +1,587 @@
 import { auth, db } from "./firebase.js";
 
 import {
-    doc,
-    getDoc,
-    setDoc,
-    collection,
-    addDoc,
-    query,
-    orderBy,
-    onSnapshot,
-    serverTimestamp
+collection,
+doc,
+getDoc,
+setDoc,
+addDoc,
+query,
+orderBy,
+onSnapshot,
+serverTimestamp,
+updateDoc
 } from "https://www.gstatic.com/firebasejs/12.15.0/firebase-firestore.js";
 
-window.currentChat = null;
-window.friendUid = null;
+/* ========================================= */
 
-let unsubscribeMessages = null;
+window.currentChat=null;
+window.friendUid=null;
 
-window.createChat = async function(friendUid){
+let unsubscribe=null;
 
-    const myUid = auth.currentUser.uid;
+/* ========================================= */
 
-    const chatId = [myUid, friendUid].sort().join("_");
+window.createChat=async(friendUid)=>{
 
-    const ref = doc(db,"chats",chatId);
+const myUid=auth.currentUser.uid;
 
-    const snap = await getDoc(ref);
+const chatId=[myUid,friendUid].sort().join("_");
 
-    if(!snap.exists()){
+const ref=doc(db,"chats",chatId);
 
-        await setDoc(ref,{
-            members:[myUid,friendUid],
-            createdAt:serverTimestamp()
-        });
+const snap=await getDoc(ref);
 
-    }
+if(!snap.exists()){
 
-    openChat(chatId,friendUid);
+await setDoc(ref,{
 
-}
+members:[myUid,friendUid],
 
-window.openChat=function(chatId,friend){
+createdAt:serverTimestamp(),
 
-    window.currentChat=chatId;
-    window.friendUid=friend;
+lastMessage:"",
 
-    if(window.watchUserStatus){
+lastTime:"",
 
-        watchUserStatus(friend);
-
-    }
-
-    if(window.enableTyping){
-
-        enableTyping(chatId);
-
-    }
-
-    if(window.watchTyping){
-
-        watchTyping(chatId,friend);
-
-    }
-
-    const messages=document.getElementById("messages");
-
-    messages.innerHTML="";
-
-    if(unsubscribeMessages){
-
-        unsubscribeMessages();
-
-    }
-
-    unsubscribeMessages=onSnapshot(
-
-        query(
-
-            collection(db,"chats",chatId,"messages"),
-
-            orderBy("time")
-
-        ),
-
-        snapshot=>{
-
-            messages.innerHTML="";
-            messageDiv.innerHTML = `
-    <div class="message-text">${text}</div>
-
-    <div class="message-reactions"
-         id="reactions-${doc.id}">
-    </div>
-
-    <div class="msg-time">${time}</div>
-`;
-            messageDiv.addEventListener("contextmenu",(e)=>{
-
-    e.preventDefault();
-
-    openReactionMenu(
-        doc.id,
-        e.pageX,
-        e.pageY
-    );
+unread:0
 
 });
 
-            snapshot.forEach(msg=>{
+}
 
-                const data=msg.data();
+openChat(chatId,friendUid);
 
-                const div=document.createElement("div");
+};
 
-                div.className="message";
+/* ========================================= */
 
-                if(data.sender===auth.currentUser.uid){
+window.openChat=async(chatId,friendUid)=>{
 
-                    div.classList.add("me");
+window.currentChat=chatId;
+window.friendUid=friendUid;
 
-                }
+const userSnap=await getDoc(
 
-                if(data.type==="gift"){
+doc(db,"users",friendUid)
 
-                    div.innerHTML=`
+);
 
-                    <div class="gift-message">
+if(userSnap.exists()){
 
-                        <div class="gift-big">
+const u=userSnap.data();
 
-                            ${data.giftEmoji}
+document.getElementById("chatTitle").innerText=
+u.username;
 
-                        </div>
+}
 
-                        <div>
+const messages=document.getElementById("messages");
 
-                            <b>${data.giftName}</b>
+messages.innerHTML="";
 
-                            <br>
+if(unsubscribe){
 
-                            🎁 Подарок
+unsubscribe();
 
-                        </div>
+}
 
-                    </div>
+unsubscribe=onSnapshot(
 
-                    `;
-                    else if(data.type==="image"){
+query(
 
-    div.innerHTML = `
+collection(db,"chats",chatId,"messages"),
 
-        <img
-            src="${data.image}"
-            class="chat-image">
+orderBy("time")
 
-    `;
-            
+),
 
-                                 }
-                else if(data.type==="voice"){
+(snapshot)=>{
 
-    div.innerHTML=`
+messages.innerHTML="";
 
-    <audio controls>
+snapshot.forEach(msg=>{
 
-        <source
-        src="${data.audio}"
-        type="audio/webm">
+renderMessage(
 
-    </audio>
+msg.id,
 
-    `;
+msg.data()
 
-                }
+);
 
-                }else{
+});
 
-                    let checks = "";
+messages.scrollTop=
 
-if(data.sender === auth.currentUser.uid){
+messages.scrollHeight;
 
-    if(data.read){
+}
 
-        checks = " ✔✔";
+);
 
-    }else if(data.delivered){
+};
 
-        checks = " ✔";
+/* ========================================= */
 
-    }else{
+function renderMessage(id,data){
 
-        checks = " ⏳";
+const messages=
+
+document.getElementById("messages");
+
+const div=document.createElement("div");
+
+div.className="message fade";
+
+if(data.sender===auth.currentUser.uid){
+
+div.classList.add("me");
+
+}
+
+let html="";
+
+/* ================= TEXT ================= */
+
+if(data.type==="text"){
+
+html+=`
+
+<div class="message-text">
+
+${escapeHtml(data.text)}
+
+</div>
+
+`;
+
+}
+
+/* ================= IMAGE ================= */
+
+if(data.type==="image"){
+
+html+=`
+
+<img
+
+src="${data.image}"
+
+class="chat-image"
+
+onclick="openImageViewer('${data.image}')"
+
+>
+
+`;
+
+}
+
+/* ================= GIFT ================= */
+
+if(data.type==="gift"){
+
+html+=`
+
+<div class="gift-message">
+
+<div class="gift-big">
+
+${data.giftEmoji}
+
+</div>
+
+<div>
+
+<b>${data.giftName}</b>
+
+<br>
+
+<span>
+
+🎁 Подарок
+
+</span>
+
+</div>
+
+</div>
+
+`;
+
+}
+
+if(data.type==="gift"){
+...
+}
+
+/* ================= VOICE ================= */
+
+if(data.type==="voice"){
+
+html+=`
+
+<audio controls>
+
+<source
+src="${data.audio}"
+type="audio/webm">
+
+</audio>
+
+`;
+
+}
+
+/* ================= REPLY ================= */
+
+if(data.reply){
+
+html+=`
+
+<div class="reply-preview">
+
+<div class="reply-name">
+
+↩ Ответ
+
+</div>
+
+<div class="reply-text">
+
+${escapeHtml(data.reply)}
+
+</div>
+
+</div>
+
+`;
+
+}
+
+/* ================= REACTIONS ================= */
+
+html+=`
+
+<div
+
+class="message-reactions"
+
+id="reactions-${id}">
+
+</div>
+
+`;
+
+/* ================= TIME ================= */
+
+const time=data.time?.toDate
+?data.time.toDate()
+:new Date();
+
+const hours=String(
+
+time.getHours()
+
+).padStart(2,"0");
+
+const minutes=String(
+
+time.getMinutes()
+
+).padStart(2,"0");
+
+let checks="";
+
+if(data.sender===auth.currentUser.uid){
+
+if(data.read){
+
+checks="✔✔";
+
+}else{
+
+checks="✔";
+
+}
+
+}
+
+html+=`
+
+<div class="msg-time">
+
+${hours}:${minutes}
+
+<span class="message-checks">
+
+${checks}
+
+</span>
+
+</div>
+
+`;
+
+div.innerHTML=html;
+
+/* ================= EVENTS ================= */
+
+div.addEventListener(
+
+"contextmenu",
+
+(e)=>{
+
+e.preventDefault();
+
+if(window.openReactionMenu){
+
+openReactionMenu(
+
+id,
+
+e.pageX,
+
+e.pageY
+
+);
+
+}
+
+}
+
+);
+
+div.addEventListener(
+
+"dblclick",
+
+()=>{
+
+if(data.type==="text"){
+
+replyToMessage(
+
+id,
+
+data.text
+
+);
+
+}
+
+}
+
+);
+
+messages.appendChild(div);
+
+}
+
+/* ========================================= */
+
+function escapeHtml(text){
+
+if(!text) return "";
+
+return text
+
+.replaceAll("&","&amp;")
+
+.replaceAll("<","&lt;")
+
+.replaceAll(">","&gt;")
+
+.replaceAll('"',"&quot;")
+
+.replaceAll("'","&#039;");
 
     }
 
-}
+/* =========================================
+   SEND MESSAGE
+========================================= */
 
-div.innerHTML = `
-<div class="message-text">
-${data.text}
-</div>
+window.sendMessage = async function () {
 
-<div class="message-checks">
-${checks}
-</div>
-`;
+    if (!window.currentChat) return;
 
-                }
+    const input = document.getElementById("message");
 
-                messages.appendChild(div);
+    const text = input.value.trim();
 
-            });
+    if (text === "") return;
 
-            messages.scrollTop=messages.scrollHeight;
-            markMessagesRead(chatId);
+    let reply = null;
+
+    if (window.getReply) {
+
+        const r = getReply();
+
+        if (r) {
+
+            reply = r.text;
 
         }
 
-    );
-
-}
-
-window.sendMessage=async function(){
-
-    const input=document.getElementById("message");
-
-    const text=input.value.trim();
-
-    if(text==="") return;
-
-    if(!window.currentChat) return;
+    }
 
     await addDoc(
 
-        collection(db,"chats",window.currentChat,"messages"),
+        collection(
+            db,
+            "chats",
+            window.currentChat,
+            "messages"
+        ),
 
         {
 
-            sender:auth.currentUser.uid,
+            sender: auth.currentUser.uid,
 
-            text:text,
+            text,
 
-            type:"text",
+            type: "text",
 
-            time:serverTimestamp(),
+            reply,
 
-            delivered:true,
+            delivered: true,
 
-            read:false
+            read: false,
+
+            time: serverTimestamp()
 
         }
 
     );
 
-    input.value="";
+    await updateDoc(
 
-}
+        doc(db, "chats", window.currentChat),
+
+        {
+
+            lastMessage: text,
+
+            lastTime: new Date().toLocaleTimeString([], {
+
+                hour: "2-digit",
+
+                minute: "2-digit"
+
+            })
+
+        }
+
+    );
+
+    input.value = "";
+
+    if (window.cancelReply) {
+
+        cancelReply();
+
+    }
+
+    if (window.showToast) {
+
+        showToast("Сообщение отправлено");
+
+    }
+
+};
+
+/* =========================================
+   MARK READ
+========================================= */
+
+window.markMessagesRead = async function () {
+
+    if (!window.currentChat) return;
+
+    const chatRef = doc(
+        db,
+        "chats",
+        window.currentChat
+    );
+
+    try {
+
+        await updateDoc(chatRef, {
+
+            unread: 0
+
+        });
+
+    } catch (e) {
+
+        console.error(e);
+
+    }
+
+};
+
+/* =========================================
+   IMAGE CLICK
+========================================= */
+
+window.openChatImage = function (src) {
+
+    if (window.openImageViewer) {
+
+        openImageViewer(src);
+
+    }
+
+};
+
+/* =========================================
+   AUTO READ
+========================================= */
+
+const observer = new MutationObserver(() => {
+
+    if (window.currentChat) {
+
+        markMessagesRead();
+
+    }
+
+});
+
+observer.observe(
+
+    document.getElementById("messages"),
+
+    {
+
+        childList: true
+
+    }
+
+);
+
+/* =========================================
+   HOTKEYS
+========================================= */
+
+document.addEventListener("keydown", (e) => {
+
+    if (e.key === "Escape") {
+
+        const input = document.getElementById("message");
+
+        input.blur();
+
+    }
+
+});
+
+/* =========================================
+   EXPORT
+========================================= */
+
+window.renderMessage = renderMessage;
+    
